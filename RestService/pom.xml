@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>BluePrintManager</artifactId>
+    <artifactId>RestService</artifactId>
 
     <properties>
         <maven.compiler.source>24</maven.compiler.source>
@@ -21,6 +21,7 @@
             <groupId>com.Orka</groupId>
             <artifactId>common-grammar</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

@@ -26,7 +26,8 @@
 		<module>BluePrintManager</module>
 		<module>common-grammar</module>
 		<module>RunManager</module>
-	</modules>
+        <module>RestService</module>
+    </modules>
     <scm>
 		<connection/>
 		<developerConnection/>
