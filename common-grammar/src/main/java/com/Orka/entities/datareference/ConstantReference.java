@@ -1,4 +1,13 @@
 package com.Orka.entities.datareference;
 
-public class ConstantReference {
+import tools.jackson.databind.JsonNode;
+
+import java.util.UUID;
+
+public class ConstantReference implements DataReference {
+    /**
+     * Stored as JSON.
+     */
+    private JsonNode jsonValue;
+
 }

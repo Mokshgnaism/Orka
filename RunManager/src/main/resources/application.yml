@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/orka
+    username: postgres
+    password: Mokshgna@123
+
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      auto-commit: false

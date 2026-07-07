@@ -1,5 +1,8 @@
 package com.Orka.entities.definition;
 
+import com.Orka.entities.bindings.InputBinding;
+
+import java.util.List;
 import java.util.UUID;
 
 public class InputDefinition {

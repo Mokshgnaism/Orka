@@ -1,7 +1,6 @@
 package com.Orka.entities.definition;
 
-import com.Orka.entities.authorization.Authorization;
-import com.Orka.internal.Variable;
+import com.Orka.internal.VariableDefinition;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,5 +22,7 @@ public class WorkflowDefinition {
     private UUID startStateDefinitionId;
 
     private List<TaskDefinition> tasks;
+
+    private List<VariableDefinition> variableDefinitions;
 
 }

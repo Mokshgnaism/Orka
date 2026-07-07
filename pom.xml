@@ -27,6 +27,7 @@
 		<module>common-grammar</module>
 		<module>RunManager</module>
         <module>RestService</module>
+<!--        <module>ExternalSystemProxy</module>-->
     </modules>
     <scm>
 		<connection/>

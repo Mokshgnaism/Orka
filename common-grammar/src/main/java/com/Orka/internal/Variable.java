@@ -1,10 +1,22 @@
 package com.Orka.internal;
 
-import java.util.UUID;
+import lombok.Getter;
+import tools.jackson.databind.JsonNode;
 
+import java.util.UUID;
+@Getter
 public class Variable {
-    public String name;
-    public String value;
-    public UUID workflowRunId;
-    public UUID workflowDefinitionId;
+//    i actually added this name here (it will be the same as the variable definition a bit redundand but handy .
+    private String name;
+
+    private UUID id;
+
+    private UUID workflowRunId;
+
+    private UUID variableDefinitionId;
+
+    /**
+     * Actual runtime value.
+     */
+    private JsonNode value;
 }
