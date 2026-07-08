@@ -5,11 +5,16 @@ import com.Orka.entities.definition.WorkflowDefinition;
 import com.Orka.entities.runtime.TaskRun;
 import com.Orka.entities.runtime.WorkflowRun;
 import com.Orka.interfaces.Repository;
+import lombok.*;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+@Getter
+@AllArgsConstructor
+@Builder
+@NoArgsConstructor
+@Setter
 public class StateInCondition
         implements AtomicCondition {
     private String name;
@@ -36,7 +41,7 @@ public class StateInCondition
 
         // out of all the task runs inside the workflow run we need to get the task run which we actually need
         List<TaskRun>temp = taskRuns.stream().filter(tr -> tr.getTaskDefinitionId().equals(taskDefinitionId)).collect(Collectors.toList());
-        TaskRun taskRun = temp.get(0);
+        TaskRun taskRun = temp.getFirst();
 
 
         UUID currentStateDefinitionId= taskRun.getCurrentStateDefinitionId();

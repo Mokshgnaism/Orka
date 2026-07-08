@@ -19,6 +19,8 @@ public class TaskRun {
      */
     private UUID currentStateDefinitionId;
 
+    private UUID currentStateRunId;
+
     private Integer retryCount;
 
     private TaskRunStatus status;

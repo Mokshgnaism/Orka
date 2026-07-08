@@ -10,11 +10,16 @@ import com.Orka.entities.runtime.TaskRun;
 import com.Orka.entities.runtime.WorkflowRun;
 import com.Orka.interfaces.Repository;
 import com.Orka.util.JsonUtility;
+import lombok.*;
 import tools.jackson.databind.JsonNode;
 
 import java.util.List;
 import java.util.UUID;
-
+@Getter
+@AllArgsConstructor
+@Builder
+@NoArgsConstructor
+@Setter
 public class StateOutputCondition implements AtomicCondition {
     private String name;
     private UUID workflowDefinitionId;
@@ -30,6 +35,7 @@ public class StateOutputCondition implements AtomicCondition {
             EvaluationContext context,
             Repository repo
     ) {
+//        TODO: reuse the code frm the StateInputCondition . don't rewrite it .
         WorkflowRun workflowRun = context.getWorkflowRun();
 
         WorkflowDefinition workflowDefinition = context.getWorkflowDefinition();

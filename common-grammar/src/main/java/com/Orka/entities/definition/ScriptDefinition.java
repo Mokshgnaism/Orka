@@ -1,11 +1,10 @@
 package com.Orka.entities.definition;
-
-import graphql.language.VariableDefinition;
-
+import com.Orka.internal.VariableDefinition;
 import java.util.List;
 import java.util.UUID;
 
 public class ScriptDefinition {
+    UUID stateRunId;
     UUID scriptDefinitionId;
     String scriptName;
     Integer version;
@@ -13,5 +12,4 @@ public class ScriptDefinition {
     String entryCommand;
     Integer timeout ; // in milliseconds
     List<VariableDefinition> environmentVariables;
-
 }
