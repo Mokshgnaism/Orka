@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package orka.api;
+
+import "data_reference.proto";
+option java_package = "com.Orka.apiContract.generated";
+option java_multiple_files = true;
+message InputBinding {
+
+  int32 id = 1;
+
+  string destination_path = 2;
+
+  DataReference data_reference = 3;
+}
+
+message InputDefinition {
+
+  int32 id = 1;
+
+  string json_schema = 2;
+
+  repeated InputBinding input_bindings = 3;
+}
+
+message OutputDefinition {
+
+  int32 id = 1;
+
+  string json_schema = 2;
+}

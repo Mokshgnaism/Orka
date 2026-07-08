@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class ScriptDefinition {
-    UUID stateRunId;
     UUID scriptDefinitionId;
     String scriptName;
     Integer version;

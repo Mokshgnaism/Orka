@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package orka.api;
+
+import "common.proto";
+import "condition.proto";
+import "input_output.proto";
+import "script_definition.proto";
+option java_package = "com.Orka.apiContract.generated";
+option java_multiple_files = true;
+message StateDefinition {
+
+  string name = 1;
+
+  int32 priority = 2;
+
+  OrkaInternalState internal_state = 3;
+
+  Condition condition = 4;
+
+  InputDefinition input_definition = 5;
+
+  OutputDefinition output_definition = 6;
+
+  ScriptDefinition script_definition = 7;
+}

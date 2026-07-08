@@ -1,7 +1,7 @@
 package com.Orka.entities.datareference;
 
 import lombok.Getter;
-import tools.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.UUID;
 @Getter

@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package orka.api;
+
+option java_multiple_files = true;
+option java_package = "com.Orka.apiContract.generated";
+option java_outer_classname = "CommonProto";
+enum OrkaInternalState {
+  ORKA_INTERNAL_STATE_UNSPECIFIED = 0;
+  CREATED = 1;
+  RUNNING = 2;
+  WAITING = 3;
+  SUCCESS = 4;
+  FAILED = 5;
+}
+
+enum ComparisonOperator {
+  COMPARISON_OPERATOR_UNSPECIFIED = 0;
+
+  EQUAL = 1;
+  NOT_EQUAL = 2;
+
+  GREATER_THAN = 3;
+  GREATER_THAN_EQUAL = 4;
+
+  LESS_THAN = 5;
+  LESS_THAN_EQUAL = 6;
+
+  CONTAINS = 7;
+  EXISTS = 8;
+}
+
+enum AtomicConditionType {
+  ATOMIC_CONDITION_TYPE_UNSPECIFIED = 0;
+
+  STATE_IN = 1;
+  STATE_INPUT = 2;
+  STATE_OUTPUT = 3;
+  WORKFLOW_VARIABLE = 4;
+}
+
+enum DataReferenceType {
+  DATA_REFERENCE_TYPE_UNSPECIFIED = 0;
+
+  CONSTANT = 1;
+  STATE_INPUT_REFERENCE = 2;
+  STATE_OUTPUT_REFERENCE = 3;
+  WORKFLOW_VARIABLE_REFERENCE = 4;
+}
+
+enum VariableType {
+  VARIABLE_TYPE_UNSPECIFIED = 0;
+
+  STRING = 1;
+  INTEGER = 2;
+  BOOLEAN = 3;
+  DOUBLE = 4;
+  JSON = 5;
+}

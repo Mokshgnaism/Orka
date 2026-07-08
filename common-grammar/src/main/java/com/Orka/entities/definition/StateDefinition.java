@@ -1,18 +1,11 @@
 package com.Orka.entities.definition;
 
 import com.Orka.entities.condition.Condition;
-import org.hibernate.validator.constraints.UUID;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-enum ORKA_INTERNAL_STATE{
-RUNNING,
-    COMPLETED,
-    ABORTED,
-    WAITING_FOR_INPUT,
-
-}
 public class StateDefinition {
 
     private UUID id;

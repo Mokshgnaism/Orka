@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package orka.api;
+
+import "google/protobuf/struct.proto";
+import "common.proto";
+import "data_reference.proto";
+option java_package = "com.Orka.apiContract.generated";
+option java_multiple_files = true;
+
+message StateInCondition {
+
+  string destination_task_definition_name = 1;
+
+  string required_state_definition_name = 2;
+}
+
+message StateInputCondition {
+
+  string destination_task_definition_name = 1;
+
+  google.protobuf.Value expected_value = 2;
+
+  DataReference data_reference = 3;
+
+  ComparisonOperator comparison_operator = 4;
+}
+
+message StateOutputCondition {
+
+  string destination_task_definition_name = 1;
+
+  google.protobuf.Value expected_value = 2;
+
+  DataReference data_reference = 3;
+
+  ComparisonOperator comparison_operator = 4;
+}
+
+message WorkflowVariableCondition {
+
+  string workflow_variable_name = 1;
+
+  google.protobuf.Value expected_value = 2;
+
+  ComparisonOperator comparison_operator = 3;
+}
+
+message AtomicCondition {
+
+  string name = 1;
+
+  oneof condition {
+
+    StateInCondition state_in = 2;
+
+    StateInputCondition state_input = 3;
+
+    StateOutputCondition state_output = 4;
+
+    WorkflowVariableCondition workflow_variable = 5;
+  }
+}
+
+message Condition {
+
+  string condition_name = 1;
+
+  repeated AtomicCondition atomic_conditions = 2;
+
+  string expression = 3;
+}

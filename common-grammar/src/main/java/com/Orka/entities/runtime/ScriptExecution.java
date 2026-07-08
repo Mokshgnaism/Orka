@@ -1,6 +1,6 @@
 package com.Orka.entities.runtime;
 
-import tools.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.time.Instant;
 import java.util.UUID;

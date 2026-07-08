@@ -12,7 +12,7 @@ target/
 .settings
 .springBeans
 .sts4-cache
-
+protobuf/
 ### IntelliJ IDEA ###
 .idea
 *.iws

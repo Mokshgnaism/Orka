@@ -11,7 +11,7 @@ import com.Orka.entities.runtime.WorkflowRun;
 import com.Orka.interfaces.Repository;
 import com.Orka.util.JsonUtility;
 import lombok.*;
-import tools.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.List;
 import java.util.UUID;
