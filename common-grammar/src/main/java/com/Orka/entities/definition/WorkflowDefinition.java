@@ -1,10 +1,18 @@
 package com.Orka.entities.definition;
 
+import com.Orka.entities.authorization.WorkflowDefinitionAuthorization;
 import com.Orka.internal.VariableDefinition;
+import lombok.*;
 
 import java.util.List;
 import java.util.UUID;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Getter
+@Setter
+@ToString
 public class WorkflowDefinition {
 
     private UUID id;
@@ -24,5 +32,7 @@ public class WorkflowDefinition {
     private List<TaskDefinition> tasks;
 
     private List<VariableDefinition> variableDefinitions;
+
+    private List<WorkflowDefinitionAuthorization> authorizationList;
 
 }

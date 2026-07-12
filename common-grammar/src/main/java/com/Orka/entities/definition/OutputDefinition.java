@@ -1,7 +1,11 @@
 package com.Orka.entities.definition;
 
-import java.util.UUID;
+import lombok.Builder;
+import lombok.Getter;
 
+import java.util.UUID;
+@Builder
+@Getter
 public class OutputDefinition {
 
     private UUID id;

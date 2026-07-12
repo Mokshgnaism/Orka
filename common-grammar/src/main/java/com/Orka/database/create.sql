@@ -19,9 +19,19 @@ CREATE TYPE orka_internal_state AS ENUM
 CREATE TYPE variable_type AS ENUM
     (
     'STRING',
-    'NUMBER',
+    'INTEGER',
     'ENUM'
 );
+
+ALTER TYPE variable_type
+add value 'INTEGER';
+
+ALTER TYPE variable_type
+    add value 'BOOLEAN';
+ALTER TYPE variable_type
+    add value 'JSON';
+ALTER TYPE variable_type
+    add value 'STRING';
 
 CREATE TYPE data_reference_type AS ENUM
     (
@@ -99,6 +109,9 @@ CREATE TABLE workflow_definition
 
     start_state_definition_id UUID
 );
+
+ALTER TABLE workflow_definition
+add column created_at DATE;
 
 ------------------------------------------------------------
 -- VARIABLE DEFINITIONS
@@ -288,7 +301,11 @@ CREATE TABLE input_definition
             REFERENCES state_definition(id)
             ON DELETE CASCADE
 );
+ALTER TABLE output_definition
+drop column json_schema ;
 
+ALTER TABLE output_definition
+add column json_schema TEXT;
 ------------------------------------------------------------
 -- OUTPUT DEFINITIONS
 ------------------------------------------------------------

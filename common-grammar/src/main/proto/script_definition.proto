@@ -17,5 +17,5 @@ message ScriptDefinition {
 
   int32 timeout = 5;
 
-  repeated VariableDefinition variables = 6;
+  repeated VariableDefinition environment_variables = 6;
 }

@@ -14,6 +14,17 @@ public enum ComparisonOperator {
 
     LESS_THAN_EQUAL,
 
-    EXISTS
+    EXISTS;
 
+    public static ComparisonOperator fromProto(
+            com.Orka.apiContract.generated.ComparisonOperator proto) {
+
+        return ComparisonOperator.valueOf(proto.name());
+    }
+
+    public com.Orka.apiContract.generated.ComparisonOperator toProto() {
+
+        return com.Orka.apiContract.generated.ComparisonOperator.valueOf(name());
+
+    }
 }

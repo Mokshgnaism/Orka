@@ -1,0 +1,9 @@
+server:
+  port: 8080
+
+spring:
+  grpc:
+    client:
+      channel:
+        definition-manager:
+          target: static://localhost:9090

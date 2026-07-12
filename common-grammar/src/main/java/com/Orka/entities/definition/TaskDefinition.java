@@ -1,10 +1,16 @@
 package com.Orka.entities.definition;
 
 import com.Orka.entities.authorization.Authorization;
+import com.Orka.entities.authorization.TaskDefinitionAuthorization;
+import lombok.*;
 
 import java.util.List;
 import java.util.UUID;
-
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class TaskDefinition {
 
     private UUID id;
@@ -15,7 +21,7 @@ public class TaskDefinition {
 
     private String description;
 
-    private List<Authorization> authorizations;
+    private List<TaskDefinitionAuthorization> authorizations;
 
     private List<StateDefinition> states;
 

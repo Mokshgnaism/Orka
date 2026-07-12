@@ -1,11 +1,15 @@
 package com.Orka.entities.definition;
 
 import com.Orka.entities.condition.Condition;
+import lombok.Builder;
+import lombok.Getter;
+
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 import java.util.List;
-
+@Builder
+@Getter
 public class StateDefinition {
 
     private UUID id;

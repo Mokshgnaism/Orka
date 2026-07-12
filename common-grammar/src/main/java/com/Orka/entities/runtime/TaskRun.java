@@ -14,10 +14,14 @@ public class TaskRun {
 
     private UUID taskDefinitionId;
 
+    private String taskDefinitionName;
+
     /**
      * Current active state.
      */
     private UUID currentStateDefinitionId;
+
+    private String currentStateDefinitionName;
 
     private UUID currentStateRunId;
 

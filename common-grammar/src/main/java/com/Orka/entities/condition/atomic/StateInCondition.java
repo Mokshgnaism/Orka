@@ -21,9 +21,9 @@ public class StateInCondition
 
     private UUID workflowDefinitionId;
 
-    private UUID taskDefinitionId;
+    private String taskDefinitionName;
 
-    private UUID stateDefinitionId;
+    private String stateDefinitionName;
 
     @Override
     public boolean evaluate(
@@ -40,13 +40,13 @@ public class StateInCondition
         List<TaskRun> taskRuns = workflowRun.getTaskRuns();
 
         // out of all the task runs inside the workflow run we need to get the task run which we actually need
-        List<TaskRun>temp = taskRuns.stream().filter(tr -> tr.getTaskDefinitionId().equals(taskDefinitionId)).collect(Collectors.toList());
+        List<TaskRun>temp = taskRuns.stream().filter(tr -> tr.getTaskDefinitionName().equals(this.taskDefinitionName)).toList();
         TaskRun taskRun = temp.getFirst();
 
 
-        UUID currentStateDefinitionId= taskRun.getCurrentStateDefinitionId();
+        String currentStateDefinitionName= taskRun.getCurrentStateDefinitionName();
 
-        return currentStateDefinitionId.equals(stateDefinitionId);
+        return currentStateDefinitionName.equals(stateDefinitionName);
     }
 
 }

@@ -26,6 +26,8 @@ public class WorkflowVariableCondition
 
     private String variableName;
 
+    private UUID variableDefinitionId;
+
     private ComparisonOperator operator;
 
     private JsonNode expectedValue;

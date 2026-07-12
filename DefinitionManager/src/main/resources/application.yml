@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/orka
+    username: postgres
+    password: Mokshgna@123
+    driver-class-name: org.postgresql.Driver
+
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      auto-commit: false
+  grpc:
+    server:
+      port: 9090
+logging:
+  level:
+    com.Orka: DEBUG

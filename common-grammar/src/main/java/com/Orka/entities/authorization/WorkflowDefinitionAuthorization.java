@@ -1,12 +1,12 @@
 package com.Orka.entities.authorization;
 
-enum WORKFLOW_DEFINITION_AUTH_ROLE {
-    MANAGER,
-    CONFIGURATOR,
-    VIEWER
-}
+import lombok.Builder;
+
+import java.util.UUID;
+
+@Builder
 public class WorkflowDefinitionAuthorization implements Authorization {
-    private String workflowDefinitionId;
+    private UUID workflowDefinitionId;
     private String username;
     private WORKFLOW_DEFINITION_AUTH_ROLE authRole;
 

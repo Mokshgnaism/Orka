@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package orka.api;
+
+import "workflow_definition.proto";
+option java_package = "com.Orka.apiContract.generated.services";
+service DefinitionManager{
+  rpc CreateWorkflowDefinition(CreateWorkflowDefinitionRequest)
+        returns (CreateWorkflowDefinitionResponse);
+
+}

@@ -3,6 +3,7 @@ package com.Orka.entities.condition.atomic;
 import com.Orka.entities.condition.AtomicCondition;
 import com.Orka.entities.condition.ComparisonOperator;
 import com.Orka.entities.condition.EvaluationContext;
+import com.Orka.entities.datareference.DataReference;
 import com.Orka.entities.datareference.StateOutputReference;
 import com.Orka.entities.definition.WorkflowDefinition;
 import com.Orka.entities.runtime.StateRun;

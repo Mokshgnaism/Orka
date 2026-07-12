@@ -4,6 +4,7 @@ package orka.api;
 
 import "task_definition.proto";
 import "variable.proto";
+import "common.proto";
 option java_package = "com.Orka.apiContract.generated";
 option java_multiple_files = true;
 message CreateWorkflowDefinitionRequest {
@@ -19,8 +20,20 @@ message CreateWorkflowDefinitionRequest {
   repeated TaskDefinition task_definitions = 5;
 
   repeated VariableDefinition workflow_variables = 6;
+
+  int32 version = 7;
+
+  string creator_name = 8;
+
+  repeated WorkflowDefinitionAuthorization authorizations = 9 ;
 }
 
 message CreateWorkflowDefinitionResponse {
   string workflow_definition_id = 1;
+  string json = 2;
+}
+
+message WorkflowDefinitionAuthorization{
+  string username = 1;
+  WorkflowDefinitionAuthRole authorization = 2;
 }
