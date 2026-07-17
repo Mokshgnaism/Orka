@@ -9,5 +9,4 @@ public class Condition {
     private String expression;
 //    we are naming this and defaults to stateNameCondition
     private String name;
-
 }
