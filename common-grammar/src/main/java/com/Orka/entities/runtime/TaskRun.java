@@ -1,29 +1,44 @@
 package com.Orka.entities.runtime;
 
-import lombok.Getter;
+import com.Orka.ENUM.status.TaskRunStatus;
+import com.Orka.entities.authorization.TaskRunAuthorization;
+import com.Orka.entities.definition.StateDefinition;
+import com.Orka.entities.definition.TaskDefinition;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.UUID;
 import java.util.List;
 @Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
 public class TaskRun {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private UUID workflowRunId;
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    private WorkflowRun workflowRun;
 
-    private UUID taskDefinitionId;
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    private TaskDefinition taskDefinition;
 
     private String taskDefinitionName;
 
     /**
      * Current active state.
      */
-    private UUID currentStateDefinitionId;
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    private StateDefinition currentState;
 
     private String currentStateDefinitionName;
 
-    private UUID currentStateRunId;
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    private StateRun currentStateRun;
 
     private Integer retryCount;
 
@@ -36,22 +51,10 @@ public class TaskRun {
     /**
      * Runtime information of every visited state.
      */
+    @OneToMany(mappedBy = "taskRun",cascade = CascadeType.ALL)
     private List<StateRun> stateRuns;
 
-
-}
-enum TaskRunStatus {
-
-    WAITING,
-
-    READY,
-
-    RUNNING,
-
-    COMPLETED,
-
-    FAILED,
-
-    CANCELLED
+    @OneToMany(mappedBy = "taskRun",cascade = CascadeType.ALL)
+    private List<TaskRunAuthorization>authorizations;
 
 }

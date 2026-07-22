@@ -33,7 +33,6 @@ public class InputDefinitionAssembler {
 
         InputDefinition inputDefinition =
                 InputDefinition.builder()
-                        .id(inputDefinitionId)
                         .jsonSchema(inputDefinitionDTO.getJsonSchema())
                         .bindings(inputBindings)
                         .build();
@@ -50,6 +49,7 @@ public class InputDefinitionAssembler {
                         ? 0
                         : inputDefinition.getJsonSchema().length());
 
-        return inputDefinition;
+         inputDefinition.getBindings().forEach(inputBinding -> {inputBinding.setInputDefinition(inputDefinition);});
+         return inputDefinition;
     }
 }

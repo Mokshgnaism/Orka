@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package orka.api;
+option java_package = "com.Orka.apiContract.generated";
+option java_multiple_files = true;
+message StateRunStartedEvent{
+  string id=1;
+}

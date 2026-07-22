@@ -21,7 +21,13 @@ public class TaskDefinition {
     private UUID id;
 
     // Keep temporarily for assembler compatibility
+    @Column(name = "workflow_definition_id_depricated")
     private UUID workflowDefinitionId;
+
+//    we are setting all as cascade type = all since we were using some dumb things in code which is too costly to be refactored
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    private WorkflowDefinition workflowDefinition;
+
 
     private String name;
 
@@ -37,9 +43,8 @@ public class TaskDefinition {
 
     @OneToMany(
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            mappedBy = "taskDefinition"
     )
-    @JoinColumn(name = "task_definition_id")
-    @Builder.Default
     private List<TaskDefinitionAuthorization> authorizations = new ArrayList<>();
 }

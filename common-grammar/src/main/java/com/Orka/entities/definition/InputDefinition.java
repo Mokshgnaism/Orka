@@ -1,15 +1,20 @@
 package com.Orka.entities.definition;
 
 import com.Orka.entities.bindings.InputBinding;
-import lombok.Builder;
-import lombok.Getter;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.List;
 import java.util.UUID;
 @Builder
 @Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
 public class InputDefinition {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     /**
@@ -20,6 +25,7 @@ public class InputDefinition {
     /**
      * How every field inside the schema is populated.
      */
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,mappedBy = "inputDefinition")
     private List<InputBinding> bindings;
 
 }

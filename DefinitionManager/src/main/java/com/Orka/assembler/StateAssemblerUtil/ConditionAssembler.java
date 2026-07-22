@@ -19,10 +19,12 @@ public class ConditionAssembler {
         log.debug("[CREATED] conditionExpression : {} ",expression);
         log.debug("[CREATED] Condition : {} ",atomicConditions);
 
-        return com.Orka.entities.condition.Condition.builder()
+        var condition = com.Orka.entities.condition.Condition.builder()
                 .atomicConditions(atomicConditions)
                 .expression(expression)
                 .name(conditionName)
                 .build();
+        condition.getAtomicConditions().forEach(atomicCondition -> atomicCondition.setCondition(condition));
+        return condition;
     }
 }

@@ -5,13 +5,15 @@ package orka.api;
 option java_multiple_files = true;
 option java_package = "com.Orka.apiContract.generated";
 option java_outer_classname = "CommonProto";
+
 enum OrkaInternalState {
   ORKA_INTERNAL_STATE_UNSPECIFIED = 0;
-  CREATED = 1;
-  RUNNING = 2;
-  WAITING = 3;
-  SUCCESS = 4;
-  FAILED = 5;
+
+  RUNNING = 1;
+  COMPLETED = 2;
+  ABORTED = 3;
+  WAITING_FOR_INPUT = 4;
+  CREATED=5;
 }
 
 enum ComparisonOperator {
@@ -26,8 +28,7 @@ enum ComparisonOperator {
   LESS_THAN = 5;
   LESS_THAN_EQUAL = 6;
 
-  CONTAINS = 7;
-  EXISTS = 8;
+  EXISTS = 7;
 }
 
 enum AtomicConditionType {
@@ -54,18 +55,36 @@ enum VariableType {
   STRING = 1;
   INTEGER = 2;
   BOOLEAN = 3;
-  DOUBLE = 4;
+  ENUM = 4;
   JSON = 5;
 }
-enum WorkflowDefinitionAuthRole{
-    WORKFLOW_UNSPECIFIED = 0 ;
-    WORKFLOW_DEFINITION_MANAGER=1;
-    WORKFLOW_DEFINITION_CONFIGURATOR=2;
-    WORKFLOW_DEFINITION_VIEWER=3;
+
+enum TaskRunAuthRole {
+  TASK_RUN_UNSPECIFIED = 0;
+
+  TASK_RUN_ASSIGNEE = 1;
+  TASK_RUN_VIEWER = 2;
 }
-enum TaskDefinitionAuthRole{
+
+enum WorkflowRunAuthRole {
+  WORKFLOW_RUN_UNSPECIFIED = 0;
+
+  WORKFLOW_RUN_MANAGER = 1;
+  WORKFLOW_RUN_CONFIGURATOR = 2;
+}
+
+enum WorkflowDefinitionAuthRole {
+  WORKFLOW_UNSPECIFIED = 0;
+
+  WORKFLOW_DEFINITION_MANAGER = 1;
+  WORKFLOW_DEFINITION_CONFIGURATOR = 2;
+  WORKFLOW_DEFINITION_VIEWER = 3;
+}
+
+enum TaskDefinitionAuthRole {
   TASK_UNSPECIFIED = 0;
-  TASK_DEFINITION_VIEWER=1;
-  TASK_DEFINITION_MANAGER =2 ;
-  TASK_DEFINITION_CONFIGURATOR = 3;
+
+  TASK_DEFINITION_MANAGER = 1;
+  TASK_DEFINITION_CONFIGURATOR = 2;
+  TASK_DEFINITION_VIEWER = 3;
 }

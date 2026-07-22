@@ -1,0 +1,8 @@
+package com.Orka.ENUM.AuthEnums;
+
+public enum TASK_DEFINITION_AUTH_ROLE{
+    CANDIDATE_ASSIGNEE,
+    VIEWER,
+    MANAGER,
+    CONFIGURATOR
+}

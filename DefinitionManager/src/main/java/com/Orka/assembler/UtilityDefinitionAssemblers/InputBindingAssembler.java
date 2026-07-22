@@ -15,12 +15,6 @@ public class InputBindingAssembler {
 
         var inputBindingBuilder = InputBinding.builder();
 
-        UUID inputBindingId = UUID.randomUUID();
-
-        log.debug("Generated InputBinding ID : {}", inputBindingId);
-
-        inputBindingBuilder.id(inputBindingId);
-
         String destinationPath = inputBindingDTO.getDestinationPath();
 
         log.debug("Destination JSON Path : {}", destinationPath);

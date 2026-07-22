@@ -1,4 +1,5 @@
 package com.Orka.assembler.utilResolver;
+
 import com.Orka.entities.bindings.InputBinding;
 import com.Orka.entities.condition.AtomicCondition;
 import com.Orka.entities.condition.Condition;
@@ -29,8 +30,8 @@ public final class WorkflowReferenceResolver {
         log.debug("Resolving workflow references");
 
         Map<String, UUID> taskNameToId = new HashMap<>();
-        Map<String, UUID> stateNameToId = new HashMap<>();
         Map<String, UUID> variableNameToId = new HashMap<>();
+        Map<String, StateDefinition> stateByKey = new HashMap<>();
 
         //----------------------------------------------------------
         // Build lookup tables
@@ -42,22 +43,19 @@ public final class WorkflowReferenceResolver {
 
             for (StateDefinition state : task.getStates()) {
 
-                stateNameToId.put(
+                stateByKey.put(
                         buildStateKey(task.getName(), state.getName()),
-                        state.getId()
+                        state
                 );
             }
         }
 
-        workflowDefinition.getVariableDefinitions().forEach(variable -> {
-
-            variableNameToId.put(
-                    variable.getName(),
-                    variable.getId()
-            );
-
-        });
-
+        workflowDefinition.getVariableDefinitions().forEach(variable ->
+                variableNameToId.put(
+                        variable.getName(),
+                        variable.getId()
+                )
+        );
 
         //----------------------------------------------------------
         // Resolve references
@@ -70,14 +68,14 @@ public final class WorkflowReferenceResolver {
                 resolveCondition(
                         state.getConditionToBecomeActive(),
                         taskNameToId,
-                        stateNameToId,
+                        stateByKey,
                         variableNameToId
                 );
 
                 resolveInputDefinition(
                         state.getInputDefinition(),
                         taskNameToId,
-                        stateNameToId
+                        stateByKey
                 );
             }
         }
@@ -92,7 +90,7 @@ public final class WorkflowReferenceResolver {
     private static void resolveCondition(
             Condition condition,
             Map<String, UUID> taskIds,
-            Map<String, UUID> stateIds,
+            Map<String, StateDefinition> stateByKey,
             Map<String, UUID> variableIds
     ) {
 
@@ -106,7 +104,7 @@ public final class WorkflowReferenceResolver {
                 resolveReference(
                         stateInputCondition.getReference(),
                         taskIds,
-                        stateIds
+                        stateByKey
                 );
             }
 
@@ -115,21 +113,18 @@ public final class WorkflowReferenceResolver {
                 resolveReference(
                         stateOutputCondition.getReference(),
                         taskIds,
-                        stateIds
+                        stateByKey
                 );
             }
+
             else if (atomicCondition instanceof WorkflowVariableCondition workflowVariableCondition) {
 
                 workflowVariableCondition.setVariableDefinitionId(
-
                         variableIds.get(
                                 workflowVariableCondition.getVariableName()
                         )
-
                 );
-
             }
-
         }
     }
 
@@ -140,7 +135,7 @@ public final class WorkflowReferenceResolver {
     private static void resolveInputDefinition(
             InputDefinition inputDefinition,
             Map<String, UUID> taskIds,
-            Map<String, UUID> stateIds
+            Map<String, StateDefinition> stateByKey
     ) {
 
         if (inputDefinition == null)
@@ -151,7 +146,7 @@ public final class WorkflowReferenceResolver {
             resolveReference(
                     inputBinding.getSource(),
                     taskIds,
-                    stateIds
+                    stateByKey
             );
         }
     }
@@ -163,7 +158,7 @@ public final class WorkflowReferenceResolver {
     private static void resolveReference(
             DataReference reference,
             Map<String, UUID> taskIds,
-            Map<String, UUID> stateIds
+            Map<String, StateDefinition> stateByKey
     ) {
 
         if (reference == null)
@@ -174,7 +169,7 @@ public final class WorkflowReferenceResolver {
             fillStateInputReference(
                     stateInputReference,
                     taskIds,
-                    stateIds
+                    stateByKey
             );
         }
 
@@ -183,7 +178,7 @@ public final class WorkflowReferenceResolver {
             fillStateOutputReference(
                     stateOutputReference,
                     taskIds,
-                    stateIds
+                    stateByKey
             );
         }
     }
@@ -195,15 +190,15 @@ public final class WorkflowReferenceResolver {
     private static void fillStateInputReference(
             StateInputReference reference,
             Map<String, UUID> taskIds,
-            Map<String, UUID> stateIds
+            Map<String, StateDefinition> stateByKey
     ) {
 
         reference.setTaskDefinitionId(
                 taskIds.get(reference.getTaskDefinitionName())
         );
 
-        reference.setStateDefinitionId(
-                stateIds.get(
+        reference.setStateDefinition(
+                stateByKey.get(
                         buildStateKey(
                                 reference.getTaskDefinitionName(),
                                 reference.getStateDefinitionName()
@@ -219,15 +214,15 @@ public final class WorkflowReferenceResolver {
     private static void fillStateOutputReference(
             StateOutputReference reference,
             Map<String, UUID> taskIds,
-            Map<String, UUID> stateIds
+            Map<String, StateDefinition> stateByKey
     ) {
 
         reference.setTaskDefinitionId(
                 taskIds.get(reference.getTaskDefinitionName())
         );
 
-        reference.setStateDefinitionId(
-                stateIds.get(
+        reference.setStateDefinition(
+                stateByKey.get(
                         buildStateKey(
                                 reference.getTaskDefinitionName(),
                                 reference.getStateDefinitionName()

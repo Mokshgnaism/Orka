@@ -4,14 +4,13 @@ import com.Orka.apiContract.generated.*;
 import com.Orka.assembler.utilResolver.WorkflowReferenceResolver;
 import com.Orka.entities.authorization.WorkflowDefinitionAuthorization;
 import com.Orka.entities.definition.WorkflowDefinition;
-import com.Orka.entities.authorization.WORKFLOW_DEFINITION_AUTH_ROLE;
+import com.Orka.ENUM.AuthEnums.WORKFLOW_DEFINITION_AUTH_ROLE;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WorkflowDefinitionAssembler {
@@ -54,9 +53,9 @@ public class WorkflowDefinitionAssembler {
         log.debug("[CREATED] AUTH : {} ",authorizations);
 
 
-
-        List<com.Orka.entities.definition.TaskDefinition> createdTaskDefinitions = taskDefinitionsDTOS.stream().map(taskDefinition -> TaskDefinitionAssembler.assemble(taskDefinition,workflowDefinitionId)).toList();
         List<com.Orka.internal.VariableDefinition> createdVariableDefinitions = variableDefinitionDTOS.stream().map(variableDefinitionDTO -> VariableDefinitionAssembler.assemble(variableDefinitionDTO,workflowDefinitionId)).toList();
+        List<com.Orka.entities.definition.TaskDefinition> createdTaskDefinitions = taskDefinitionsDTOS.stream().map(taskDefinition -> TaskDefinitionAssembler.assemble(taskDefinition,workflowDefinitionId,createdVariableDefinitions)).toList();
+
 
         List<UUID>startTaskDefinitionIds = createdTaskDefinitions.stream().filter(taskDefinition -> startTaskDefinitionName.equals(taskDefinition.getName())).map(com.Orka.entities.definition.TaskDefinition::getId).toList();
 
@@ -112,11 +111,18 @@ public class WorkflowDefinitionAssembler {
                 .version(version)
                 .creatorName(creatorName)
                 .startTaskDefinitionId(startTaskDefinitionIds.getFirst())
-                .startStateDefinitionId(stateDefinitionsList.getFirst().getId())
+                .startState(stateDefinitionsList.getFirst())
                 .authorizationList(authorizations)
                 .tasks(createdTaskDefinitions)
                 .variableDefinitions(createdVariableDefinitions)
                 .build();
+
+        workflowDefinition.getTasks().forEach(task -> {task.setWorkflowDefinition(workflowDefinition);});
+
+        workflowDefinition.getAuthorizationList().forEach(auth->{auth.setWorkflowDefinition(workflowDefinition);});
+
+        workflowDefinition.getVariableDefinitions().forEach(variable -> {variable.setWorkflowDefinition(workflowDefinition);});
+
 //        resolve the ids which were not filled by us in the dfs (state input reference and state output reference only contained ids until this point)
         WorkflowReferenceResolver.resolve(workflowDefinition);
         return workflowDefinition;

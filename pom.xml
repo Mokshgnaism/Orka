@@ -25,7 +25,9 @@
 		<module>RunManager</module>
 		<module>RestService</module>
 		<module>Automata</module>
-	</modules>
+        <module>ScriptExecutor</module>
+        <module>AuthorizationManager</module>
+    </modules>
 
 	<properties>
 

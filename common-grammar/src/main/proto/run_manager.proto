@@ -1,0 +1,11 @@
+syntax = "proto3";
+package orka.api;
+
+import "workflow_run.proto";
+
+option java_package = "com.Orka.apiContract.generated.services";
+
+service RunManager{
+  rpc startWorkflowRun(StartWorkflowRunRequest)
+      returns (StartWorkflowRunResponse);
+}

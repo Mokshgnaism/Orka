@@ -3,18 +3,18 @@ package com.Orka.assembler;
 import com.Orka.apiContract.generated.StateDefinition;
 import com.Orka.apiContract.generated.TaskDefinitionAuthRole;
 import com.Orka.apiContract.generated.TaskDefinitionAuthorization;
-import com.Orka.apiContract.generated.VariableDefinition;
-import com.Orka.entities.authorization.TASK_DEFINITION_AUTH_ROLE;
+import com.Orka.internal.VariableDefinition;
+import com.Orka.ENUM.AuthEnums.TASK_DEFINITION_AUTH_ROLE;
 import com.Orka.entities.definition.TaskDefinition;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
 @Slf4j
 public class TaskDefinitionAssembler {
-    public  static TaskDefinition assemble(com.Orka.apiContract.generated.TaskDefinition taskDefinitionDTO, UUID workflowDefinitionId) {
+    public  static TaskDefinition assemble(com.Orka.apiContract.generated.TaskDefinition taskDefinitionDTO, UUID workflowDefinitionId,List<VariableDefinition> createdVariableDefinitions) {
         String taskName =  taskDefinitionDTO.getName();
         String taskDescription =  taskDefinitionDTO.getDescription();
 
@@ -40,7 +40,7 @@ public class TaskDefinitionAssembler {
 //        -----------------------------------BUILDING states---------------------------------------
 //        this state definition list is for dtos not the original statedef class .
         List<StateDefinition>stateDefinitionDTOS = taskDefinitionDTO.getStatesList();
-        List<com.Orka.entities.definition.StateDefinition> createdStates = stateDefinitionDTOS.stream().map(stateDefDto -> StateDefinitionAssembler.assemble(stateDefDto,taskDefinitionId,workflowDefinitionId)).toList();
+        List<com.Orka.entities.definition.StateDefinition> createdStates = stateDefinitionDTOS.stream().map(stateDefDto -> StateDefinitionAssembler.assemble(stateDefDto,taskDefinitionId,workflowDefinitionId,createdVariableDefinitions)).toList();
 
 
 
@@ -58,6 +58,8 @@ public class TaskDefinitionAssembler {
                 task.getName(),
                 task.getStates().size()
         );
+        task.getAuthorizations().forEach(auth -> {auth.setTaskDefinition(task);});
+        task.getStates().forEach(state -> {state.setTaskDefinition(task);});
         return task;
     }
     private static TASK_DEFINITION_AUTH_ROLE ENUM_MAPPER(TaskDefinitionAuthRole ROLE_DTO){
@@ -69,6 +71,6 @@ public class TaskDefinitionAssembler {
         else if(ROLE_DTO.equals(TaskDefinitionAuthRole.TASK_DEFINITION_VIEWER))
             return TASK_DEFINITION_AUTH_ROLE.VIEWER;
         else
-            return null;
+            return TASK_DEFINITION_AUTH_ROLE.CANDIDATE_ASSIGNEE;
     }
 }

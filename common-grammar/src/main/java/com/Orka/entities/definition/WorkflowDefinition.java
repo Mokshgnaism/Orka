@@ -34,16 +34,15 @@ public class WorkflowDefinition {
     // Keep for backward compatibility for now
     private UUID startTaskDefinitionId;
 
-    // Keep for backward compatibility for now
-    private UUID startStateDefinitionId;
+
+
+
 
     // New JPA relationship
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "start_state_definition_id",
-            referencedColumnName = "id",
-            insertable = false,
-            updatable = false
+            referencedColumnName = "id"
     )
     private StateDefinition startState;
 

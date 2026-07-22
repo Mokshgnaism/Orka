@@ -1,7 +1,7 @@
 package com.Orka.assembler;
 
 import com.Orka.internal.VariableDefinition;
-import com.Orka.internal.VariableType;
+import com.Orka.ENUM.typeEnums.VariableType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
@@ -32,7 +32,6 @@ public class VariableDefinitionAssembler {
             throw new RuntimeException(e);
         }
         return VariableDefinition.builder()
-                .id(uuid)
                 .workflowDefinitionId(workflowDefinitionId)
                 .name(variableName)
                 .defaultValue(defaultValue)

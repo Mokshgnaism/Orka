@@ -1,4 +1,25 @@
 spring:
+  grpc:
+    server:
+      port: 7070
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+
+    consumer:
+      group-id: state-machine
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
   datasource:
     url: jdbc:postgresql://localhost:5432/orka
     username: postgres

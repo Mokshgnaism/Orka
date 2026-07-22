@@ -1,7 +1,7 @@
 package com.Orka.assembler.StateAssemblerUtil;
 
 import com.Orka.entities.condition.AtomicCondition;
-import com.Orka.entities.condition.ComparisonOperator;
+import com.Orka.ENUM.typeEnums.ComparisonOperator;
 import com.Orka.entities.condition.atomic.StateInCondition;
 import com.Orka.entities.condition.atomic.StateInputCondition;
 import com.Orka.entities.condition.atomic.StateOutputCondition;
@@ -69,6 +69,7 @@ public class atomicConditionAssembler {
                     .build();
         }
         else if(atomicConditionDTO.hasStateOutput()){
+//            TODO : remove this destinationTaskDefinition Name from here. since it is handled at the data reference .
             String destinationTaskDefinitionName = atomicConditionDTO.getStateOutput().getDestinationTaskDefinitionName();
             JsonNode expectedValue = JsonUtility.translateFromProtobufValue(atomicConditionDTO.getStateOutput().getExpectedValue());
             DataReference dataReference = DataReferenceAssembler.assemble(atomicConditionDTO.getStateOutput().getDataReference());

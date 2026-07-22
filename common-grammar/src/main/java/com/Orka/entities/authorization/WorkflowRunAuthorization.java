@@ -1,20 +1,28 @@
 package com.Orka.entities.authorization;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.Orka.ENUM.AuthEnums.WORKFLOW_DEFINITION_AUTH_ROLE;
+import com.Orka.ENUM.AuthEnums.WORKFLOW_RUN_AUTH_ROLE;
+import com.Orka.entities.runtime.WorkflowRun;
+import jakarta.persistence.*;
+import lombok.*;
 
-enum WORKFLOW_RUN_AUTH_ROLE {
-    CONFIGURATOR,
-    MANAGER
-}
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Entity
 public class WorkflowRunAuthorization implements Authorization {
-    private String workflowRunId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @ManyToOne
+    private WorkflowRun workflowRun;
+
     private String username;
-    private WORKFLOW_DEFINITION_AUTH_ROLE authRole;
+
+    private WORKFLOW_RUN_AUTH_ROLE authRole;
 }

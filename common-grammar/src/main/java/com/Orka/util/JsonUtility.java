@@ -1,10 +1,9 @@
 package com.Orka.util;
 
-import com.Orka.entities.condition.ComparisonOperator;
+import com.Orka.ENUM.typeEnums.ComparisonOperator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.Value;
 import com.google.protobuf.util.JsonFormat;

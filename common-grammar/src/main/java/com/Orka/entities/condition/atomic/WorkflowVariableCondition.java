@@ -1,35 +1,46 @@
 package com.Orka.entities.condition.atomic;
 
 import com.Orka.entities.condition.AtomicCondition;
-import com.Orka.entities.condition.ComparisonOperator;
+import com.Orka.ENUM.typeEnums.ComparisonOperator;
 import com.Orka.entities.condition.EvaluationContext;
 import com.Orka.entities.runtime.WorkflowRun;
 import com.Orka.interfaces.Repository;
 import com.Orka.internal.Variable;
+import com.Orka.internal.VariableDefinition;
 import com.Orka.util.JsonUtility;
+import jakarta.persistence.*;
 import lombok.*;
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.List;
 import java.util.UUID;
 @Getter
 @AllArgsConstructor
-@Builder
+@SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @Setter
+@Entity
+@DiscriminatorValue("WORKFLOW_VARIABLE")
+@ToString
 public class WorkflowVariableCondition
-        implements AtomicCondition {
-
-    private String name;
-
-    private UUID workflowDefinitionId;
+        extends AtomicCondition {
 
     private String variableName;
 
+    // keeping for backward compatibility;
+    @Column(name = "variable_definition_id_deprecated")
     private UUID variableDefinitionId;
+
+    @ManyToOne
+    private VariableDefinition variableDefinition;
 
     private ComparisonOperator operator;
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
     private JsonNode expectedValue;
 
     @Override

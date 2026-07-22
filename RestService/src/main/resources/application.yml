@@ -1,9 +1,26 @@
 server:
-  port: 8080
+  port: 4536
 
 spring:
+  devtools:
+    restart:
+      enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: update
   grpc:
     client:
-      channel:
+      channels:
         definition-manager:
-          target: static://localhost:9090
+          address: static://localhost:9090
+        run-manager:
+          address: static://localhost:7070
+  datasource:
+    url: jdbc:postgresql://localhost:5432/orka
+    username: postgres
+    password: Mokshgna@123
+    driver-class-name: org.postgresql.Driver
+logging:
+  level:
+    org.springframework.grpc: TRACE
+debug: true

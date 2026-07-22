@@ -5,8 +5,11 @@ import com.Orka.entities.definition.ScriptDefinition;
 import com.Orka.internal.VariableDefinition;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class ScriptDefinitionAssembler {
@@ -14,7 +17,8 @@ public class ScriptDefinitionAssembler {
     public static ScriptDefinition assemble(
             com.Orka.apiContract.generated.ScriptDefinition scriptDefinitionDTO,
             UUID workflowDefinitionId,
-            UUID stateDefinitionId) {
+            UUID stateDefinitionId,
+            List<VariableDefinition> variableDefinitions) {
 
         log.debug("Assembling ScriptDefinition");
 
@@ -46,20 +50,19 @@ public class ScriptDefinitionAssembler {
 
         log.debug("Environment Variables Count : {}", environmentVariableDTOS.size());
 
-        List<VariableDefinition> environmentVariables =
-                environmentVariableDTOS.stream()
-                        .map(envVar -> VariableDefinitionAssembler.assemble(envVar, workflowDefinitionId))
-                        .toList();
+        Map<String, VariableDefinition> nameToVariableDefinition = new HashMap<>();
+        variableDefinitions.forEach(variableDefinition -> {nameToVariableDefinition.put(variableDefinition.getName(),variableDefinition);});
+
+        List<VariableDefinition> environmentVariables = environmentVariableDTOS.stream().map(envVarDto->{return nameToVariableDefinition.get(envVarDto.getName());}).collect(Collectors.toList());
+
 
         ScriptDefinition scriptDefinition =
                 ScriptDefinition.builder()
-                        .id(scriptDefinitionID)
                         .scriptName(scriptName)
                         .version(version)
                         .entryCommand(scriptDefinitionDTO.getEntryCommand())
                         .dockerImage(dockerImage)
                         .timeout(timeout)
-                        .stateDefinitionId(stateDefinitionId)
                         .environmentVariables(environmentVariables)
                         .build();
 

@@ -3,6 +3,8 @@ package com.Orka.internal;
 
 
 
+import com.Orka.ENUM.typeEnums.VariableType;
+import com.Orka.entities.definition.WorkflowDefinition;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,9 +22,11 @@ import java.util.UUID;
 public class VariableDefinition {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     // Keep temporarily for assembler compatibility
+    @Column(name = "workflow_definition_id_deprecated")
     private UUID workflowDefinitionId;
 
     @Column(nullable = false)
@@ -35,4 +39,7 @@ public class VariableDefinition {
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "default_value", columnDefinition = "jsonb")
     private JsonNode defaultValue;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private WorkflowDefinition workflowDefinition;
 }

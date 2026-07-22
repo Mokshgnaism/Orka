@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package orka.api;
+
+import "task_definition.proto";
+import "variable.proto";
+import "common.proto";
+option java_package = "com.Orka.apiContract.generated";
+option java_multiple_files = true;
+
+message TaskRunAuthorization{
+  string username=1;
+  TaskRunAuthRole authRole=2;
+}
+message WorkflowRunAuthorization{
+  string username = 1;
+  WorkflowRunAuthRole authRole=2;
+}
+message TotalAuthForOneTaskRun{
+  string name=1;
+  repeated TaskRunAuthorization taskRunAuthorizations =2;
+}
+
+message StartWorkflowRunRequest{
+  string id = 1;
+  repeated TotalAuthForOneTaskRun taskRunAuthorization =2;
+  repeated WorkflowRunAuthorization workflowAuthorization=3;
+}
+message StartWorkflowRunResponse{
+  string id=1;
+  string error=2;
+}

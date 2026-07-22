@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package orka.api;
+option java_package = "com.Orka.apiContract.generated";
+option java_multiple_files = true;
+import "google/protobuf/struct.proto";
+
+message ScriptExecutionResult {
+
+  google.protobuf.Value output = 1;
+
+  string stdout = 2;
+
+  string stderr = 3;
+
+  int32 exit_code = 4;
+
+  string error = 5;
+
+  string state_run_id=6;
+
+}

@@ -1,13 +1,10 @@
 package com.Orka.grpc;
-
-import com.Orka.Repository.jdbcWorkflowDefinitionRepository;
 import com.Orka.apiContract.generated.CreateWorkflowDefinitionRequest;
 import com.Orka.apiContract.generated.CreateWorkflowDefinitionResponse;
 import com.Orka.apiContract.generated.services.DefinitionManagerGrpc;
 import com.Orka.assembler.WorkflowDefinitionAssembler;
 import com.Orka.entities.definition.WorkflowDefinition;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.Orka.repository.WorkflowDefinitionRepository;
 import io.grpc.stub.StreamObserver;
 import org.springframework.grpc.server.service.GrpcService;
 
@@ -15,11 +12,12 @@ import org.springframework.grpc.server.service.GrpcService;
 public class DefinitionManagerServiceImpl
         extends DefinitionManagerGrpc.DefinitionManagerImplBase {
 
-    private final jdbcWorkflowDefinitionRepository jdbcWorkflowDefinitionRepository;
+    private final WorkflowDefinitionRepository workflowDefinitionRepository;
 
-    public DefinitionManagerServiceImpl(jdbcWorkflowDefinitionRepository jdbcWorkflowDefinitionRepository) {
+
+    public DefinitionManagerServiceImpl( WorkflowDefinitionRepository workflowDefinitionRepository) {
         super();
-        this.jdbcWorkflowDefinitionRepository = jdbcWorkflowDefinitionRepository;
+        this.workflowDefinitionRepository = workflowDefinitionRepository;
     }
 
     @Override
@@ -32,7 +30,7 @@ public class DefinitionManagerServiceImpl
             WorkflowDefinition createdWorkflowDefinition =
                     WorkflowDefinitionAssembler.assembleWorkflowDefinition(request);
 
-            jdbcWorkflowDefinitionRepository.save(createdWorkflowDefinition);
+            workflowDefinitionRepository.save(createdWorkflowDefinition);
 
             CreateWorkflowDefinitionResponse response =
                     CreateWorkflowDefinitionResponse.newBuilder()

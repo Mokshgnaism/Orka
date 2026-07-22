@@ -1,0 +1,9 @@
+syntax = "proto3";
+package orka.api;
+
+option java_multiple_files = true;
+option java_package = "com.Orka.apiContract.generated";
+
+message WorkflowRunCreatedEvent{
+  string workflow_run_id=1;
+}

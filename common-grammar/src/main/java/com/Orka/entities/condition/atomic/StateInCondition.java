@@ -5,21 +5,24 @@ import com.Orka.entities.definition.WorkflowDefinition;
 import com.Orka.entities.runtime.TaskRun;
 import com.Orka.entities.runtime.WorkflowRun;
 import com.Orka.interfaces.Repository;
+import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
-@Builder
+@SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @Setter
+@Entity
+@DiscriminatorValue("STATE_IN")
+@ToString
 public class StateInCondition
-        implements AtomicCondition {
-    private String name;
+        extends AtomicCondition {
 
-    private UUID workflowDefinitionId;
 
     private String taskDefinitionName;
 
@@ -45,6 +48,9 @@ public class StateInCondition
 
 
         String currentStateDefinitionName= taskRun.getCurrentStateDefinitionName();
+        if(currentStateDefinitionName==null){
+            return false;
+        }
 
         return currentStateDefinitionName.equals(stateDefinitionName);
     }

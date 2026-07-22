@@ -21,7 +21,6 @@ public class OutputDefinitionAssembler {
 
         OutputDefinition outputDefinition =
                 OutputDefinition.builder()
-                        .id(outputDefinitionId)
                         .jsonSchema(outputDefinitionDTO.getJsonSchema())
                         .build();
 

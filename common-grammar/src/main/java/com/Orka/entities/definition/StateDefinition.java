@@ -1,39 +1,34 @@
 package com.Orka.entities.definition;
-
+import com.Orka.ENUM.typeEnums.ORKA_INTERNAL_STATE;
 import com.Orka.entities.condition.Condition;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
-
-import javax.annotation.Nullable;
-import java.util.List;
 @Entity
 @Table(name = "state_definition")
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "state_definition")
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Setter
 public class StateDefinition {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     // Temporary
+    @Column(name = "task_definition_id_deprecated")
     private UUID taskDefinitionId;
 
     private String name;
 
     private Integer priority;
+
+
+    @ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
+    private TaskDefinition taskDefinition;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "internal_state")
@@ -51,7 +46,7 @@ public class StateDefinition {
     @JoinColumn(name = "output_definition_id")
     private OutputDefinition outputDefinition;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true,mappedBy = "stateDefinition")
     @JoinColumn(name = "script_definition_id")
     private ScriptDefinition scriptDefinition;
 }

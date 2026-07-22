@@ -57,9 +57,10 @@ public final class ConditionEngine {
                 while(!operators.peek().equals("(")){
                     output.add(operators.pop());
                 }
+                operators.pop();
             }
             else if(precedence(token) != 0){
-                while(!operators.peek().equals("(") && !operators.empty() && precedence(operators.peek()) >= precedence(token)){
+                while(!operators.empty() && !operators.peek().equals("(") && precedence(operators.peek()) >= precedence(token)){
                     output.add(operators.pop());
                 }
                 operators.push(token);
@@ -81,6 +82,7 @@ public final class ConditionEngine {
                 if(b == null){
                     throw new IllegalArgumentException("Invalid postfix expression");
                 }
+                stack.push(b);
             }
             else if(token.equals("!")){
                 Boolean b = stack.pop();
