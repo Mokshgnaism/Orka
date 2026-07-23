@@ -69,7 +69,8 @@ public class ScriptRunner {
             log.info("script execution already running");
             return;
         }
-//        TODO : DEADLOCK CHANCE reduced but not ZERO use proper lock system .
+//        TODO : DEADLOCK CHANCE reduced but not ZERO use proper lock system . nope this is a mistake from our side
+//        this is a transactional thing so we might need to have this properly divided .
         scriptExecution.setRunning(true);
 
         scriptExecutionRepository.save(scriptExecution);

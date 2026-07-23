@@ -45,12 +45,19 @@ public class DockerScriptExecutor {
         Path workspace = null;
         Path outputFile = null;
         Path inputFile = null;
+        System.out.println("[HUMAN] : "+userEntryCommand);
         try {
             workspace = Files.createTempDirectory("orka-"+scriptExecution.getId());
             inputFile = workspace.resolve("input.json");
             outputFile = workspace.resolve("output.json");
             ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.writeValue(inputFile.toFile(), input);
+            try{
+                objectMapper.writeValue(inputFile.toFile(), input);
+            }catch(Exception e){
+                log.error("Error while writing input file");
+                e.printStackTrace();
+            }
+
             ProcessBuilder pb = new ProcessBuilder(
                     "docker",
                     "run",
@@ -62,6 +69,8 @@ public class DockerScriptExecutor {
                     "-c",
                     userEntryCommand
             );
+            System.out.println("[HUMAN]: " + userEntryCommand);
+
             Process process = pb.start();
             boolean finished = process.waitFor(ExecutionContract.MAX_TIME, TimeUnit.SECONDS);
 
@@ -109,10 +118,19 @@ public class DockerScriptExecutor {
             String stdOut = cfStdOut.get().toString();
             String stdErr = cfStdErr.get().toString();
             JsonNode output = null;
+
             if (outputFile != null && Files.exists(outputFile)) {
-                output = objectMapper.readTree(outputFile.toFile());
-                log.info("[HUMAN] : script output  : {}",output);
-            } else {
+
+                System.out.println("PATH = " + outputFile.toAbsolutePath());
+
+                String contents = Files.readString(outputFile);
+
+                System.out.println("========== OUTPUT ==========");
+                System.out.println(contents);
+                System.out.println("============================");
+
+                output = objectMapper.readTree(contents);
+            }else {
                 log.error("Output file was not created: {}", outputFile);
             }
             log.info("[HUMAN] : script std out : {}",stdOut);
@@ -142,6 +160,7 @@ public class DockerScriptExecutor {
         } catch (Exception e) {
             log.error(e.getMessage());
             log.error("error creating workspace path");
+            e.printStackTrace();
 //             we need to publish an event for failed script execution with number for notification manager so it can notify users about failure
             throw new RuntimeException(e);
         }

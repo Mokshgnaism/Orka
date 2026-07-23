@@ -10,8 +10,13 @@ import java.util.*;
 public final class ConditionEngine {
     private ConditionEngine() {}
     public static Boolean evaluateCondition(Condition condition,EvaluationContext evaluationContext,Repository repository){
+
         String expression = condition.getExpression();
         List<AtomicCondition> atomicCondtions = condition.getAtomicConditions();
+        if(atomicCondtions.isEmpty()){
+            return false;
+//            for start state;
+        }
         List<String>tokens = tokenize(expression);
         List<String>postfix = toPostfix(tokens);
         Map<String,Boolean>results = evaulateAtomicConditions(atomicCondtions,evaluationContext,repository);

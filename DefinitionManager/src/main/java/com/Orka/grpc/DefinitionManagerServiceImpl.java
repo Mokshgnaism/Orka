@@ -34,8 +34,7 @@ public class DefinitionManagerServiceImpl
 
             CreateWorkflowDefinitionResponse response =
                     CreateWorkflowDefinitionResponse.newBuilder()
-                            .setWorkflowDefinitionId("1")
-                            .setJson("yellow")
+                            .setWorkflowDefinitionId(createdWorkflowDefinition.getId().toString())
                             .build();
 
             responseObserver.onNext(response);

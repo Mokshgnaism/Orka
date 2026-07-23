@@ -18,16 +18,26 @@ public class JsonUtility {
         if(root == null || jsonPath == null){
             return null;
         }
+        System.out.println("===== JSON ROOT =====");
+        System.out.println(root);
+        System.out.println(root == null ? "null" : root.getClass());
+        System.out.println("=====================");
+
         if(!jsonPath.startsWith("$.")) {
             throw new IllegalArgumentException(jsonPath + " is not a valid json path(doesnt start with '.')");
         }
-        String[] parts = jsonPath.split("\\.");
+        String[] parts = jsonPath.substring(2).split("\\.");
         JsonNode current = root;
         for(String part : parts){
+            System.out.println("Current = " + current);
+            System.out.println("Looking for = " + part);
+
             if(current == null){
                 throw new IllegalArgumentException(jsonPath + " is not a valid json path(wrong fields or more depth)");
             }
             current = current.get(part);
+
+            System.out.println("Next = " + current);
         }
         return current;
     }
@@ -88,6 +98,14 @@ public class JsonUtility {
         switch (operator) {
 
             case EQUAL:
+
+                if (actual.isNumber() && expected.isNumber()) {
+                    return Double.compare(
+                            actual.asDouble(),
+                            expected.asDouble()
+                    ) == 0;
+                }
+
                 return actual.equals(expected);
 
             case NOT_EQUAL:
