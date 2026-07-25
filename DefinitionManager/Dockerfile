@@ -30,7 +30,7 @@ WORKDIR /app
 
 # Copy the generated JAR file from the builder stage
 # (Change 'main-service' in the path below when adapting for other services)
-COPY --from=builder /build/main-service/target/*.jar app.jar
+COPY --from=builder /build/DefinitionManager/target/*.jar app.jar
 
 # Document the port your microservice listens on
 EXPOSE 9090

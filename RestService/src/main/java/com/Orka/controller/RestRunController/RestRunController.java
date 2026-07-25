@@ -35,9 +35,6 @@ public class RestRunController {
         ProvideInputResponse response = runManagerClient.provideInput(request);
         return ResponseEntity.status(response.getHttpResponse().getStatusCode()).body(response.getHttpResponse());
     }
-
-    @GetMapping("/api/run/workflows")
-    public ResponseEntity<>
 }
 
 // 1) create an input proto . for

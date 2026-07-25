@@ -13,7 +13,7 @@ COPY . .
 # Build only this specific microservice.
 # -pl specifies the module name (change 'main-service' to match your folder name)
 # -am (Also Make) tells Maven to find and build 'common-grammar' automatically
-RUN mvn clean package -pl main-service -am -DskipTests
+RUN mvn clean package -pl RestService -am -DskipTests
 
 # ==========================================
 # STAGE 2: Lightweight Runtime Environment
@@ -30,7 +30,7 @@ WORKDIR /app
 
 # Copy the generated JAR file from the builder stage
 # (Change 'main-service' in the path below when adapting for other services)
-COPY --from=builder /build/main-service/target/*.jar app.jar
+COPY --from=builder /build/RestService/*.jar app.jar
 
 # Document the port your microservice listens on
 EXPOSE 4536
