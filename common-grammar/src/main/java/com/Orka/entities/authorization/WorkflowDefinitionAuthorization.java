@@ -3,10 +3,7 @@ package com.Orka.entities.authorization;
 import com.Orka.ENUM.AuthEnums.WORKFLOW_DEFINITION_AUTH_ROLE;
 import com.Orka.entities.definition.WorkflowDefinition;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -15,6 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
+@Getter
 public class WorkflowDefinitionAuthorization {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

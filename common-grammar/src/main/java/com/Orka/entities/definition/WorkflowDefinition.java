@@ -34,10 +34,6 @@ public class WorkflowDefinition {
     // Keep for backward compatibility for now
     private UUID startTaskDefinitionId;
 
-
-
-
-
     // New JPA relationship
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(

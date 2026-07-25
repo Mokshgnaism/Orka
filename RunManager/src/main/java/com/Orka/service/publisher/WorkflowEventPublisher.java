@@ -1,4 +1,4 @@
-package com.Orka.service.KafkaService;
+package com.Orka.service.publisher;
 
 import com.Orka.apiContract.generated.WorkflowRunCreatedEvent;
 import com.Orka.events.KafkaTopics;
@@ -17,7 +17,7 @@ public class WorkflowEventPublisher {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public boolean publish(UUID workflowRunId){
+    public boolean publish_workflow_created_event(UUID workflowRunId){
         log.info("Publishing workflow run id {}", workflowRunId);
         if(workflowRunId == null){
             throw new IllegalArgumentException("Workflow run id cannot be null");

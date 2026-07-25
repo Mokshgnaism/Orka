@@ -3,7 +3,7 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://localhost:5432/orka
+    url: ${PG_ADDRESS:jdbc:postgresql://localhost:5432/orka}
     username: postgres
     password: Mokshgna@123
     driver-class-name: org.postgresql.Driver

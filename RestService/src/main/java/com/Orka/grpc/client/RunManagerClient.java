@@ -1,5 +1,7 @@
 package com.Orka.grpc.client;
 
+import com.Orka.apiContract.generated.ProvideInputRequest;
+import com.Orka.apiContract.generated.ProvideInputResponse;
 import com.Orka.apiContract.generated.StartWorkflowRunRequest;
 import com.Orka.apiContract.generated.StartWorkflowRunResponse;
 import com.Orka.apiContract.generated.services.RunManagerGrpc;
@@ -16,4 +18,8 @@ public class RunManagerClient {
     public StartWorkflowRunResponse startWorkflowRun(@RequestBody StartWorkflowRunRequest request){
         return stub.startWorkflowRun(request);
     }
+    public ProvideInputResponse provideInput(@RequestBody ProvideInputRequest request){
+        return stub.provideInput(request);
+    }
+
 }

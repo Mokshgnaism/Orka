@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+package orka.api;
+
+option java_package = "com.Orka.apiContract.generated";
+import "workflow_definition.proto";
+message WorkflowDefinitionDTO{
+  string id=1;
+  string name=2;
+  int32 version=3;
+  string created_by=4;
+  string start_task_name=5;
+  string start_task_id=6;
+  string start_state_name=7;
+  string start_state_id=8;
+  int32 numberOfTasks=9;
+  repeated WorkflowDefinitionAuthorization authorizations =10;
+}
+message GetAllWorkflowDefinitionsResponse{
+  repeated WorkflowDefinitionDTO workflowDefinitions = 1;
+}
+message GetAllWorkflowDefinitionsRequest{
+
+}

@@ -25,6 +25,7 @@ message StartWorkflowRunRequest{
   string id = 1;
   repeated TotalAuthForOneTaskRun taskRunAuthorization =2;
   repeated WorkflowRunAuthorization workflowAuthorization=3;
+  string username=4;
 }
 message StartWorkflowRunResponse{
   string id=1;

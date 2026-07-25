@@ -1,0 +1,67 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: shop-postgres
+    environment:
+      POSTGRES_DB: orka
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Mokshgna@123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  kafka:
+    image: apache/kafka:latest
+    container_name: shop-kafka
+    ports:
+      - "9092:9092"
+  rest-service:
+    build:
+      context: .
+      dockerfile: RestService/Dockerfile
+    ports: ["4536:4536"]
+    environment:
+      - PG_ADDRESS=jdbc:postgresql://postgres:5432/orka
+      - KAFKA_ADDRESS=kafka:9092
+      - DM_ADDRESS=static://dm:9090
+      - RM_ADDRESS=static://rm:7070
+  dm:
+    build:
+      context: .
+      dockerfile: DefinitionManager/Dockerfile
+    ports:
+      - "9090:9090"
+    environment:
+      - PG_ADDRESS=jdbc:postgresql://postgres:5432/orka
+      - KAFKA_ADDRESS=kafka:9092
+  rm:
+    build:
+      context: .
+      dockerfile: RunManager/Dockerfile
+    ports:
+      - "7070:7070"
+    environment:
+      - PG_ADDRESS=jdbc:postgresql://postgres:5432/orka
+      - KAFKA_ADDRESS=kafka:9092
+      - DM_ADDRESS=static://dm:9090
+      - RM_ADDRESS=static://rm:7070
+  automata:
+    build:
+      context: .
+      dockerfile: Automata/Dockerfile
+    environment:
+      - PG_ADDRESS=jdbc:postgresql://postgres:5432/orka
+      - KAFKA_ADDRESS=kafka:9092
+      - DM_ADDRESS=static://dm:9090
+      - RM_ADDRESS=static://rm:7070
+  script-executor:
+    build:
+      context: .
+      dockerfile: ScriptExecutor/Dockerfile
+    environment:
+      - PG_ADDRESS=jdbc:postgresql://postgres:5432/orka
+      - KAFKA_ADDRESS=kafka:9092
+      - DM_ADDRESS=static://dm:9090
+      - RM_ADDRESS=static://rm:7070
+volumes:
+  postgres_data:

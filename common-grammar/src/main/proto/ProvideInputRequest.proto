@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package orka.api;
+option java_package = "com.Orka.apiContract.generated";
+option java_multiple_files = true;
+import "google/protobuf/struct.proto";
+import "httpResponse.proto";
+message ProvideInputRequest{
+  string username=4;
+  string task_run_id=1;
+  string path=2;
+  google.protobuf.Value inputVal = 3;
+}
+message ProvideInputResponse{
+  bool done=1;
+  ProtoHttpResponse httpResponse=2;
+}

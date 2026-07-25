@@ -1,7 +1,7 @@
 spring:
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/orka
+    url: ${PG_ADDRESS:jdbc:postgresql://localhost:5432/orka}
     username: postgres
     password: Mokshgna@123
 
@@ -15,7 +15,7 @@ spring:
       ddl-auto: update
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${KAFKA_SERVICE:localhost:9092}
 
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package orka.api;
+
+option java_multiple_files = true;
+option java_package = "com.Orka.apiContract.generated";
+
+message WorkflowRunDTO{
+  string started_by=1;
+  string workflow_run_id=2;
+  string workflow_definition_id=3;
+  int64 startedAt=4;
+
+}
+message BulkWorkflowRunResponse{
+  repeated WorkflowRunDTO workflowRuns=1;
+}

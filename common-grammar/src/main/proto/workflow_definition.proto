@@ -26,6 +26,9 @@ message CreateWorkflowDefinitionRequest {
   string creator_name = 8;
 
   repeated WorkflowDefinitionAuthorization authorizations = 9 ;
+
+  // will not be using this for frontend -> rest service it will be set by rest service to Definition service
+  string username=10;
 }
 
 message CreateWorkflowDefinitionResponse {
