@@ -3,7 +3,6 @@ package com.Orka.service;
 import com.Orka.entities.condition.AtomicCondition;
 import com.Orka.entities.condition.EvaluationContext;
 import com.Orka.entities.definition.StateDefinition;
-import com.Orka.entities.definition.TaskDefinition;
 import com.Orka.entities.definition.WorkflowDefinition;
 import com.Orka.entities.runtime.StateRun;
 import com.Orka.entities.runtime.TaskRun;
@@ -35,8 +34,9 @@ public class TaskRunEngine {
         this.taskRunRepository = taskRunRepository;
     }
 
-    public  void update(TaskRun taskRun, WorkflowRun workflowRun,EvaluationContext evaluationContext ) {
+    public  void update(TaskRun taskRun) {
 
+        EvaluationContext evaluationContext = new EvaluationContext(taskRun.getWorkflowRun(),taskRun.getWorkflowRun().getWorkflowDefinition());
         List<StateRun> stateRuns = taskRun.getStateRuns();
         List<StateRun> activeStateRuns = new ArrayList<>();
         if(taskRun.getStateRuns()==null){

@@ -5,7 +5,7 @@ import com.Orka.entities.runtime.WorkflowRun;
 import com.Orka.Assembler.WorkflowRunAssembler;
 import com.Orka.repository.WorkflowDefinitionRepository;
 import com.Orka.repository.WorkflowRunRepository;
-import com.Orka.service.KafkaService.WorkflowEventPublisher;
+import com.Orka.service.publisher.WorkflowEventPublisher;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

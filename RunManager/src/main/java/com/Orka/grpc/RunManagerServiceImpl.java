@@ -1,10 +1,13 @@
 package com.Orka.grpc;
 
+import com.Orka.apiContract.generated.ProvideInputRequest;
+import com.Orka.apiContract.generated.ProvideInputResponse;
 import com.Orka.apiContract.generated.StartWorkflowRunRequest;
 import com.Orka.apiContract.generated.StartWorkflowRunResponse;
 import com.Orka.apiContract.generated.services.RunManagerGrpc;
 import com.Orka.entities.runtime.WorkflowRun;
-import com.Orka.service.KafkaService.WorkflowEventPublisher;
+import com.Orka.service.TaskRunService;
+import com.Orka.service.publisher.WorkflowEventPublisher;
 import com.Orka.service.WorkflowRunService;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
@@ -14,11 +17,13 @@ import org.springframework.grpc.server.service.GrpcService;
 public class RunManagerServiceImpl extends RunManagerGrpc.RunManagerImplBase {
     private final WorkflowRunService workflowRunService;
     private final WorkflowEventPublisher workflowEventPublisher;
+    private final TaskRunService taskRunService;
 
 
-    public RunManagerServiceImpl(WorkflowRunService workflowRunService, WorkflowEventPublisher workflowEventPublisher) {
+    public RunManagerServiceImpl(WorkflowRunService workflowRunService, WorkflowEventPublisher workflowEventPublisher, TaskRunService taskRunService) {
         this.workflowRunService = workflowRunService;
         this.workflowEventPublisher = workflowEventPublisher;
+        this.taskRunService = taskRunService;
     }
 
     @Override
@@ -32,7 +37,7 @@ public class RunManagerServiceImpl extends RunManagerGrpc.RunManagerImplBase {
             WorkflowRun workflowRun =
                     workflowRunService.startWorkflowRun(request);
             if(workflowRun!=null){
-                workflowEventPublisher.publish(workflowRun.getId());
+                workflowEventPublisher.publish_workflow_created_event(workflowRun.getId());
             }
 
             responseObserver.onNext(
@@ -52,5 +57,12 @@ public class RunManagerServiceImpl extends RunManagerGrpc.RunManagerImplBase {
                             .withCause(e)
                             .asRuntimeException());
         }
+    }
+
+    @Override
+    public void provideInput(ProvideInputRequest request, StreamObserver<ProvideInputResponse>streamObserver){
+        ProvideInputResponse response = taskRunService.provideInput(request);
+        streamObserver.onNext(response);
+        streamObserver.onCompleted();
     }
 }

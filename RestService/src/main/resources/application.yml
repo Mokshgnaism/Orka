@@ -12,11 +12,11 @@ spring:
     client:
       channels:
         definition-manager:
-          address: static://localhost:9090
+          address: ${DM_ADDRESS:static://localhost:9090}
         run-manager:
-          address: static://localhost:7070
+          address: ${RM_ADDRESS:static://localhost:7070}
   datasource:
-    url: jdbc:postgresql://localhost:5432/orka
+    url: ${PG_ADDRESS:jdbc:postgresql://localhost:5432/orka}
     username: postgres
     password: Mokshgna@123
     driver-class-name: org.postgresql.Driver

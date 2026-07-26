@@ -1,5 +1,6 @@
 package com.Orka.controller;
 
+import com.Orka.apiContract.generated.ProvideInputRequest;
 import com.Orka.apiContract.generated.ScriptExecutionResult;
 import com.Orka.apiContract.generated.WorkflowRunCreatedEvent;
 import com.Orka.entities.condition.EvaluationContext;
@@ -8,16 +9,16 @@ import com.Orka.entities.runtime.StateRun;
 import com.Orka.entities.runtime.TaskRun;
 import com.Orka.entities.runtime.WorkflowRun;
 import com.Orka.repository.StateRunRepository;
+import com.Orka.repository.TaskRunRepository;
 import com.Orka.service.TaskRunEngine;
 import com.Orka.service.WorkflowRunEngine;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.InvalidProtocolBufferException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import com.Orka.events.KafkaTopics;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.Optional;
+
 import java.util.UUID;
 
 @Service
@@ -27,11 +28,13 @@ public class KafkaController {
     private final StateRunRepository stateRunRepository;
     private final TaskRunEngine taskRunEngine;
     private final WorkflowRunEngine workflowRunEngine;
+    private final TaskRunRepository taskRunRepository;
 
-    public KafkaController(StateRunRepository stateRunRepository, TaskRunEngine taskRunEngine, WorkflowRunEngine workflowRunEngine) {
+    public KafkaController(StateRunRepository stateRunRepository, TaskRunEngine taskRunEngine, WorkflowRunEngine workflowRunEngine, TaskRunRepository taskRunRepository) {
         this.stateRunRepository = stateRunRepository;
         this.taskRunEngine = taskRunEngine;
         this.workflowRunEngine = workflowRunEngine;
+        this.taskRunRepository = taskRunRepository;
         System.out.println("Kafka Controller initialized");
     }
 
@@ -71,8 +74,7 @@ public class KafkaController {
             }
             WorkflowRun workflowRun = stateRun.getTaskRun().getWorkflowRun();
             WorkflowDefinition workflowDefinition = workflowRun.getWorkflowDefinition();
-            EvaluationContext evaluationContext = new EvaluationContext(workflowRun,workflowDefinition);
-            taskRunEngine.update(stateRun.getTaskRun(),workflowRun,evaluationContext);
+            taskRunEngine.update(stateRun.getTaskRun());
             workflowRunEngine.advanceWorkflow(workflowRun.getId(),false);
         }catch (InvalidProtocolBufferException invalidProtocolBufferException){
             log.error("invalidProtocolBufferException",invalidProtocolBufferException);
@@ -84,8 +86,18 @@ public class KafkaController {
         }
     }
 
-    public void listen_input_provided(byte[] event) {
-
+    @KafkaListener(
+            topics = KafkaTopics.TASK_INPUT_PROVIDED,
+            groupId = KafkaTopics.TASK_INPUT_PROVIDED + "-automata -group"
+    )
+    public void listen_input_provided(byte[] event) throws InvalidProtocolBufferException {
+        ProvideInputRequest request = ProvideInputRequest.parseFrom(event);
+        log.info("[HUMAN] Recieved input provided event for {}",request.getTaskRunId());
+        TaskRun taskRun = taskRunRepository.findById(UUID.fromString(request.getTaskRunId())).orElse(null);
+        if(taskRun==null)
+            return;
+        taskRunEngine.update(taskRun);
+        workflowRunEngine.advanceWorkflow(taskRun.getWorkflowRun().getId(),false);
     }
 
 }

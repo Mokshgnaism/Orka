@@ -1,8 +1,6 @@
 package com.Orka.service;
 
 import com.Orka.entities.condition.EvaluationContext;
-import com.Orka.entities.definition.WorkflowDefinition;
-import com.Orka.entities.runtime.TaskRun;
 import com.Orka.entities.runtime.WorkflowRun;
 import com.Orka.repository.WorkflowRunRepository;
 import jakarta.transaction.Transactional;
@@ -10,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 @Service
 @Slf4j
@@ -48,7 +45,7 @@ public class WorkflowRunEngine {
                 .flatMap(taskRun -> taskRun.getStateRuns().stream())
                 .forEach(stateRunEngine::updateInput);
 
-        workflowRun.getTaskRuns().forEach(taskRun -> {taskRunEngine.update(taskRun,workflowRun,evaluationContext);});
+        workflowRun.getTaskRuns().forEach(taskRunEngine::update);
 
 //        setting the start state.
 

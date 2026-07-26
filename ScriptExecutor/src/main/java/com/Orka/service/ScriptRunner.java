@@ -28,14 +28,9 @@ public class ScriptRunner {
         this.scriptExecutionRepository = scriptExecutionRepository;
         this.scriptDockerScriptExecutor = dockerScriptExecutor;
         this.executorService = executorService;
-        System.out.println("====== ScriptRunner constructor ======");
     }
 
     public  void detectAndStartScript(StateRunStartedEvent stateRunStartedEvent) {
-        log.info("[HUMAN]ScriptRunner instance = {}", System.identityHashCode(this));
-        log.info("[HUMAN]stateRunRepository = {}", stateRunRepository);
-        log.info("[HUMAN]scriptExecutionRepository = {}", scriptExecutionRepository);
-        log.info("[human]executorService = {}", executorService);
         Optional<StateRun> stateRunOptional = stateRunRepository.findById(UUID.fromString(stateRunStartedEvent.getId()));
         if(stateRunOptional.isEmpty()) {
             log.error("State Run Not Found for event {}", stateRunStartedEvent);
@@ -73,6 +68,10 @@ public class ScriptRunner {
 //        this is a transactional thing so we might need to have this properly divided .
         scriptExecution.setRunning(true);
 
+//        since we are doing an async submission and we already have a good backoff
+//        right now if the virtual thread pool dies due to some reason . the kafka event is consumed so we cannot depend on kafka to make consistency
+//        we need some more safety for it . like whenever it is started we nee
+//        TODO : consistency proof .
         scriptExecutionRepository.save(scriptExecution);
 
         if(scriptExecution.getStartedAt()==null){
