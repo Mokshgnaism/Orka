@@ -14,6 +14,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -28,6 +29,7 @@ import java.util.UUID;
 @Entity
 @DiscriminatorValue("STATE_INPUT")
 @ToString
+@Slf4j
 public class StateInputCondition
         extends AtomicCondition {
 
@@ -65,11 +67,14 @@ public class StateInputCondition
         List<StateRun>stateRuns = taskRun.getStateRuns();
         stateRuns = stateRuns.stream().filter(stateRun -> stateDefinitionId.equals(stateRun.getStateDefinition().getId())).toList();
         StateRun stateRun = stateRuns.getFirst();
-
+        log.info("reached state Input condition for");
         JsonNode stateInput = stateRun.getInput();
-
+        log.info(String.valueOf(stateInput));
+        log.info("[human] required path :" + pathInsideInput);
         JsonNode exactVal = JsonUtility.getValue(stateInput, pathInsideInput);
+        log.info(String.valueOf(exactVal));
 
+        log.info(JsonUtility.compare(exactVal,this.expectedValue,this.operator) ? "this condition is true" : "this condition is false");
         return JsonUtility.compare(exactVal,this.expectedValue,this.operator);
     }
 }

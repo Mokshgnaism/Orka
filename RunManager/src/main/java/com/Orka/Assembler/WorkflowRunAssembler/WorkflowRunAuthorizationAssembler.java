@@ -1,4 +1,4 @@
-package com.Orka.Assembler;
+package com.Orka.Assembler.WorkflowRunAssembler;
 
 import com.Orka.ENUM.AuthEnums.WORKFLOW_RUN_AUTH_ROLE;
 import com.Orka.apiContract.generated.WorkflowRunAuthRole;

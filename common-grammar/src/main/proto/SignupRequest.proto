@@ -1,10 +1,9 @@
 syntax = "proto3";
-
-package orka.api;
 option java_package = "com.Orka.apiContract.generated";
 option java_multiple_files = true;
-
-// TODO : after development of orka (if we want to go big) we can do filtering server side
-message BulkRequest{
+import "httpResponse.proto";
+message SignupRequest{
   string username=1;
+  string email=2;
+  string password=3;
 }

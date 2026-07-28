@@ -21,5 +21,5 @@ message GetAllWorkflowDefinitionsResponse{
   repeated WorkflowDefinitionDTO workflowDefinitions = 1;
 }
 message GetAllWorkflowDefinitionsRequest{
-
+  string username=1;
 }

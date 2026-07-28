@@ -17,6 +17,7 @@ public class KafkaPublisher {
     public void publish_workflowDefinitionStarted(UUID id){
         kafkaTemplate.send(
                 KafkaTopics.WORKFLOW_DEFINITION_CREATED,
+                id.toString(),
                 WorkflowDefinitionCreatedEvent.newBuilder().setWorkflowDefinitionId(id.toString()).build().toByteArray()
         );
     }

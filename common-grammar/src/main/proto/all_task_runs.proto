@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+package orka.api;
+
+option java_package = "com.Orka.apiContract.generated";
+import "workflow_run.proto";
+import "StateRunStarted.proto";
+import "httpResponse.proto";
+message TaskRunDTO {
+  string id = 1;
+  string workflow_run_id = 2;
+  string task_definition_id = 3;
+  string task_definition_name = 4;
+  string current_state_definition_id = 5;
+  string current_state_definition_name = 6;
+  string current_state_run_id=12;
+  int32 retry_count = 7;
+  string status = 8;
+  string started_at = 9;
+  string completed_at = 10;
+  repeated TaskRunAuthorization authorizations = 11;
+}
+
+message GetAllTaskRunsResponse {
+  repeated TaskRunDTO taskRuns = 1;
+}
+
+message GetAllTaskRunsRequest {
+  string username = 1;
+  string workflow_run_id = 2;
+}
+
+message GetSingleTaskRunRequest{
+  string id=1;
+  string username=2;
+}
+
+message  GetSingleTaskRunResponse{
+  TaskRunDTO taskRun=1;
+  StateRunDTO currentStateRun=2;
+  ProtoHttpResponse httpResponse=3;
+}

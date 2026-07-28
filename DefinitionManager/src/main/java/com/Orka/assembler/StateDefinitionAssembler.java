@@ -25,8 +25,9 @@ public class StateDefinitionAssembler {
         InputDefinition inputDefinition = InputDefinitionAssembler.assemble(stateDefinition.getInputDefinition());
 
         OutputDefinition outputDefinition = OutputDefinitionAssembler.assemble(stateDefinition.getOutputDefinition());
-
-        ScriptDefinition scriptDefinition = ScriptDefinitionAssembler.assemble(stateDefinition.getScriptDefinition(),workflowDefinitionId,stateDefinitionId,variableDefinitions);
+        ScriptDefinition scriptDefinition = null;
+        if(stateDefinition.hasScriptDefinition())
+             scriptDefinition = ScriptDefinitionAssembler.assemble(stateDefinition.getScriptDefinition(),workflowDefinitionId,stateDefinitionId,variableDefinitions);
 
 
            StateDefinition state =  StateDefinition.builder()

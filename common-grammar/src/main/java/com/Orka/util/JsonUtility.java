@@ -42,11 +42,13 @@ public class JsonUtility {
         return current;
     }
 
+
     public static JsonNode setValue(
             JsonNode original,
             String jsonPath,
             JsonNode value) {
-
+        if(original == null )
+            original = JsonNodeFactory.instance.objectNode();
         if (!(original instanceof ObjectNode root)) {
             throw new IllegalArgumentException(
                     "Root must be an ObjectNode");
@@ -144,6 +146,21 @@ public class JsonUtility {
                 throw new RuntimeException("Failed to translate protobuf Value to JsonNode", e);
             }
         }
+
+    public static Value translateToProtobufValue(JsonNode value) {
+        try {
+            Value.Builder builder = Value.newBuilder();
+
+            JsonFormat.parser().merge(
+                    OBJECT_MAPPER.writeValueAsString(value),
+                    builder
+            );
+
+            return builder.build();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to translate JsonNode to protobuf Value", e);
+        }
+    }
     public static PGobject toJson(JsonNode node) throws SQLException {
 
         PGobject object = new PGobject();

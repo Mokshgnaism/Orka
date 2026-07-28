@@ -1,6 +1,6 @@
 package com.Orka.grpc;
 
-import com.Orka.apiContract.generated.ProvideInputRequest;
+import com.Orka.apiContract.generated.*;
 import com.Orka.apiContract.generated.ProvideInputResponse;
 import com.Orka.apiContract.generated.StartWorkflowRunRequest;
 import com.Orka.apiContract.generated.StartWorkflowRunResponse;
@@ -39,7 +39,9 @@ public class RunManagerServiceImpl extends RunManagerGrpc.RunManagerImplBase {
             if(workflowRun!=null){
                 workflowEventPublisher.publish_workflow_created_event(workflowRun.getId());
             }
-
+//            not handled the `not found case` well.
+//            TODO : eliminate the possibility of the NPE
+//            need to have the http response for this as well.
             responseObserver.onNext(
                     StartWorkflowRunResponse.newBuilder()
                             .setId(workflowRun.getId().toString())
@@ -64,5 +66,48 @@ public class RunManagerServiceImpl extends RunManagerGrpc.RunManagerImplBase {
         ProvideInputResponse response = taskRunService.provideInput(request);
         streamObserver.onNext(response);
         streamObserver.onCompleted();
+    }
+
+    @Override
+    public void getAllWorkflowRuns(GetAllWorkflowRunsRequest request, StreamObserver<GetAllWorkflowRunsResponse> responseObserver) {
+        GetAllWorkflowRunsResponse response = null;
+        try{
+            response = workflowRunService.getAllWorkflowRuns(request.getUsername());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            log.error(e.getMessage());
+            responseObserver.onError(e);
+        }
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+
+    @Override
+    public void getAllTaskRuns(GetAllTaskRunsRequest request, StreamObserver<GetAllTaskRunsResponse> responseObserver) {
+        GetAllTaskRunsResponse response = taskRunService.getAllTaskRuns(request.getUsername());
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getTaskRunById(GetSingleTaskRunRequest request, StreamObserver<GetSingleTaskRunResponse> responseObserver) {
+        GetSingleTaskRunResponse response = taskRunService.getTaskRunById(request.getId(),request.getUsername());
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getWorkflowRunById(GetSingleWorkflowRunRequest request, StreamObserver<GetSingleWorkflowRunResponse> responseObserver) {
+        try{
+            GetSingleWorkflowRunResponse response = workflowRunService.getWorkflowRunById(request,request.getUsername());
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        }catch (Exception e){
+            e.printStackTrace();
+            responseObserver.onError(e);
+        }
+
     }
 }

@@ -3,11 +3,13 @@ package com.Orka.service.publisher;
 import com.Orka.events.KafkaTopics;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
+@Service
 public class TaskRunEventPublisher {
     private final KafkaTemplate<String,byte[]>kafkaTemplate;
 

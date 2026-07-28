@@ -1,4 +1,4 @@
-package com.Orka.Assembler;
+package com.Orka.Assembler.WorkflowRunAssembler;
 
 import com.Orka.ENUM.status.StateRunStatus;
 import com.Orka.entities.definition.StateDefinition;

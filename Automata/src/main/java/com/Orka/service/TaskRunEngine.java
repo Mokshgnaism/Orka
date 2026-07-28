@@ -1,5 +1,6 @@
 package com.Orka.service;
 
+import com.Orka.ENUM.status.WorkflowRunStatus;
 import com.Orka.entities.condition.AtomicCondition;
 import com.Orka.entities.condition.EvaluationContext;
 import com.Orka.entities.definition.StateDefinition;
@@ -39,9 +40,15 @@ public class TaskRunEngine {
         EvaluationContext evaluationContext = new EvaluationContext(taskRun.getWorkflowRun(),taskRun.getWorkflowRun().getWorkflowDefinition());
         List<StateRun> stateRuns = taskRun.getStateRuns();
         List<StateRun> activeStateRuns = new ArrayList<>();
+        WorkflowRun workflowRun = taskRun.getWorkflowRun();
+        if(workflowRun.getStatus().equals(WorkflowRunStatus.COMPLETED))
+            return;
+        if(workflowRun.getStatus().equals(WorkflowRunStatus.CANCELLED))
+            return;
         if(taskRun.getStateRuns()==null){
             taskRun.setStateRuns(new ArrayList<>());
         }
+        StateRun stateRunRightNow = taskRun.getCurrentStateRun();
         for (StateRun stateRun : stateRuns) {
             for(AtomicCondition atomicCondition : stateRun.getStateDefinition().getConditionToBecomeActive().getAtomicConditions()){
                 log.info("[HUMAN] one of the condition for becoming active : {}",atomicCondition);
@@ -55,7 +62,13 @@ public class TaskRunEngine {
 //            did not have any current state (default -> NOT_STARTED)
             return ;
         }
-        activeStateRuns.sort(Comparator.comparingInt(x -> x.getStateDefinition().getPriority()));
+        if(stateRunRightNow==activeStateRuns.getFirst()){
+//            task did not get updated.
+//            what if it reEntered?
+//            it is advised to have a failed state. re entering directly will not be supported any more .
+            return;
+        }
+        activeStateRuns.sort(Comparator.comparingInt(x -> -x.getStateDefinition().getPriority()));
         taskRun.setCurrentStateRun(activeStateRuns.getFirst());
         taskRun.setCurrentStateDefinitionName(activeStateRuns.getFirst().getStateDefinition().getName());
 

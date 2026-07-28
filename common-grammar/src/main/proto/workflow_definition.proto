@@ -7,6 +7,7 @@ import "variable.proto";
 import "common.proto";
 option java_package = "com.Orka.apiContract.generated";
 option java_multiple_files = true;
+import "condition.proto";
 message CreateWorkflowDefinitionRequest {
 
   string name = 1;
@@ -29,6 +30,12 @@ message CreateWorkflowDefinitionRequest {
 
   // will not be using this for frontend -> rest service it will be set by rest service to Definition service
   string username=10;
+
+  Condition failed_condition=11;
+
+  Condition completed_condition=12;
+
+  Condition running_condition=13;
 }
 
 message CreateWorkflowDefinitionResponse {

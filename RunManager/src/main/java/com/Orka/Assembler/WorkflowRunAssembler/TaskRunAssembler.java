@@ -1,13 +1,11 @@
-package com.Orka.Assembler;
+package com.Orka.Assembler.WorkflowRunAssembler;
 
 import com.Orka.ENUM.status.TaskRunStatus;
 import com.Orka.entities.definition.TaskDefinition;
-import com.Orka.entities.definition.WorkflowDefinition;
 import com.Orka.entities.runtime.StateRun;
 import com.Orka.entities.runtime.TaskRun;
 import com.Orka.entities.runtime.WorkflowRun;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TaskRunAssembler {

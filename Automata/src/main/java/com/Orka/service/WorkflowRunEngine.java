@@ -1,5 +1,6 @@
 package com.Orka.service;
 
+import com.Orka.ENUM.status.WorkflowRunStatus;
 import com.Orka.entities.condition.EvaluationContext;
 import com.Orka.entities.runtime.WorkflowRun;
 import com.Orka.repository.WorkflowRunRepository;
@@ -27,11 +28,16 @@ public class WorkflowRunEngine {
 //    it right now checks the whole workflow and the whole state runs to see for the next state (
 //    TODO : don't use this for advancing workflow BUILD A dependency graph and reverse index that to efficiently traverse the event (in future)
     public WorkflowRun advanceWorkflow(UUID workflowRunId,boolean justStarted){
+
       log.info("Workflow run advancement started for {}", workflowRunId);
       WorkflowRun workflowRun = workflowRunRepository.findById(workflowRunId).orElse(null);
       if(workflowRun == null){
           log.error("Workflow run advancement failed for {} (workflow not found[BUG])", workflowRunId);
           return null;
+      }
+      if(workflowRun.getStatus().equals(WorkflowRunStatus.COMPLETED) ||  workflowRun.getStatus().equals(WorkflowRunStatus.FAILED)){
+          log.info("Workflow run advancement cancelled  for {}", workflowRun.getWorkflowDefinition().getName());
+          return workflowRun;
       }
       if(justStarted)
             taskRunEngine.setStart(workflowRun);
@@ -47,9 +53,17 @@ public class WorkflowRunEngine {
 
         workflowRun.getTaskRuns().forEach(taskRunEngine::update);
 
-//        setting the start state.
+        boolean isRunning = workflowRun.getWorkflowDefinition().getRunningCondition().isSatisified(evaluationContext);
+        boolean isCompleted = workflowRun.getWorkflowDefinition().getCompletedCondition().isSatisified(evaluationContext);
+        boolean isFailed = workflowRun.getWorkflowDefinition().getFailedCondition().isSatisified(evaluationContext);
 
-
+        if(isCompleted){
+            workflowRun.setStatus(WorkflowRunStatus.COMPLETED);
+        }else if(isFailed){
+            workflowRun.setStatus(WorkflowRunStatus.FAILED);
+        }else {
+            workflowRun.setStatus(WorkflowRunStatus.RUNNING);
+        }
         try{
             workflowRunRepository.save(workflowRun);
         } catch (Exception e) {

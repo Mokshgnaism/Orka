@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+package orka.api;
+
+option java_package = "com.Orka.apiContract.generated";
+import "workflow_run.proto";
+import "all_task_runs.proto";
+import "condition.proto";
+import "httpResponse.proto";
+message WorkflowRunDTO {
+  string id = 1;
+  string workflow_definition_id = 2;
+  string workflow_definition_name = 3;
+  int32 workflow_definition_version = 4;
+  string status = 5;
+  string started_at = 6;
+  string completed_at = 7;
+  int32 number_of_tasks = 8;
+  repeated WorkflowRunAuthorization authorizations = 9;
+}
+
+message GetAllWorkflowRunsResponse {
+  repeated WorkflowRunDTO workflowRuns = 1;
+}
+
+message GetAllWorkflowRunsRequest {
+  string username = 1;
+}
+
+message GetSingleWorkflowRunRequest{
+  string id=1;
+  string username=2;
+}
+
+message GetSingleWorkflowRunResponse{
+  WorkflowRunDTO workflowRun=1;
+  repeated GetSingleTaskRunResponse taskRuns=2;
+  WorkflowRunGraph  workflowRunGraph=3;
+  ProtoHttpResponse httpResponse=4;
+}
+
+message WorkflowRunGraph{
+  repeated Node nodes=1;
+  repeated Edge edges=2;
+}
+message StateNode{
+  string id=4;
+  string state_name=1;
+  string state_id=2;
+  string task_name=3;
+}
+
+message JoinNode{
+  string id=1;
+}
+
+message PlaceHolderCondition{
+  string expression=1;
+  string name =2;
+}
+message Edge{
+  string from=1;
+  string to=2;
+  string name=8;
+  oneof condition{
+    StateInCondition state_in =3;
+    StateInputCondition state_input=4;
+    StateOutputCondition state_output=5;
+    WorkflowVariableCondition workflow_var=6;
+    PlaceHolderCondition placeHolder=7;
+  }
+}
+message Node{
+  oneof node{
+    JoinNode joinNode=1;
+    StateNode stateNode=2;
+  }
+}

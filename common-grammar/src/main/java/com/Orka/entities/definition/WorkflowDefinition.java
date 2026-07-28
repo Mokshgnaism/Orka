@@ -1,6 +1,7 @@
 package com.Orka.entities.definition;
 
 import com.Orka.entities.authorization.WorkflowDefinitionAuthorization;
+import com.Orka.entities.condition.Condition;
 import com.Orka.internal.VariableDefinition;
 import jakarta.persistence.*;
 import lombok.*;
@@ -62,4 +63,17 @@ public class WorkflowDefinition {
             orphanRemoval = true
     )
     private List<WorkflowDefinitionAuthorization> authorizationList = new ArrayList<>();
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "failed_condition_id")
+    private Condition failedCondition;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "completed_condition_id")
+    private Condition completedCondition;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "running_condition_id")
+    private Condition runningCondition;
+
 }

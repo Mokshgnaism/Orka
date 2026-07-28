@@ -3,6 +3,7 @@ package com.Orka.controller.RestRunController;
 import com.Orka.apiContract.generated.*;
 import com.Orka.grpc.client.RunManagerClient;
 import com.Orka.user.User;
+import lombok.NonNull;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,6 +36,51 @@ public class RestRunController {
         ProvideInputResponse response = runManagerClient.provideInput(request);
         return ResponseEntity.status(response.getHttpResponse().getStatusCode()).body(response.getHttpResponse());
     }
+
+    @GetMapping("/api/run/tasks")
+    public ResponseEntity<GetAllTaskRunsResponse> getAllTaskRuns() {
+        @NonNull
+        User user = (User) Objects.requireNonNull(Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal());
+
+        var request = GetAllTaskRunsRequest.newBuilder().setUsername(user.getUsername()).build();
+
+         GetAllTaskRunsResponse response =  runManagerClient.getAllTaskRuns(request);
+//         TODO : add a http response to the request body and make sure the same code passes through
+         return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/api/run/workflows")
+    public ResponseEntity<GetAllWorkflowRunsResponse> getAllWorkflowRuns() {
+        @NonNull
+        User user = (User) Objects.requireNonNull(Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal());
+        var request = GetAllWorkflowRunsRequest.newBuilder().setUsername(user.getUsername()).build();
+
+        GetAllWorkflowRunsResponse response = runManagerClient.getAllWorkflowRuns(request);
+
+        return ResponseEntity.ok().body(response);
+    }
+
+
+    @GetMapping("/api/run/task/{id}")
+    public ResponseEntity<GetSingleTaskRunResponse>getSingleTaskRun(@PathVariable String id){
+        @NonNull
+        User user = (User) Objects.requireNonNull(Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal());
+        var request = GetSingleTaskRunRequest.newBuilder().setId(id).setUsername(user.getUsername()).build();
+        GetSingleTaskRunResponse response = runManagerClient.getTaskRunById(request);
+        int statusCode = response.getHttpResponse().getStatusCode();
+        return ResponseEntity.status(statusCode).body(response);
+    }
+
+    @GetMapping("/api/run/workflow/{id}")
+    public ResponseEntity<GetSingleWorkflowRunResponse>getSingleWorkflowRun(@PathVariable String id){
+        @NonNull
+        User user = (User) Objects.requireNonNull(Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal());
+        var request = GetSingleWorkflowRunRequest.newBuilder().setId(id).setUsername(user.getUsername()).build();
+        GetSingleWorkflowRunResponse response = runManagerClient.getWorkflowRunById(request);
+        int statusCode = response.getHttpResponse().getStatusCode();
+        return ResponseEntity.status(statusCode).body(response);
+    }
+
 }
 
 // 1) create an input proto . for

@@ -1,6 +1,7 @@
 package com.Orka.assembler;
 
 import com.Orka.apiContract.generated.*;
+import com.Orka.assembler.StateAssemblerUtil.ConditionAssembler;
 import com.Orka.assembler.utilResolver.WorkflowReferenceResolver;
 import com.Orka.entities.authorization.WorkflowDefinitionAuthorization;
 import com.Orka.entities.definition.WorkflowDefinition;
@@ -103,6 +104,12 @@ public class WorkflowDefinitionAssembler {
                     return null;
                 });
 
+        Condition failedConditionDTO = request.getFailedCondition();
+        Condition completedConditionDTO = request.getCompletedCondition();
+        Condition runningConditionDTO = request.getRunningCondition();
+        com.Orka.entities.condition.Condition failedCondition =  ConditionAssembler.assemble(failedConditionDTO,workflowDefinitionId);
+        com.Orka.entities.condition.Condition completedCondition =  ConditionAssembler.assemble(completedConditionDTO,workflowDefinitionId);
+        com.Orka.entities.condition.Condition runningCondition =  ConditionAssembler.assemble(runningConditionDTO,workflowDefinitionId);
 
         WorkflowDefinition workflowDefinition =  WorkflowDefinition.builder()
                 .id(workflowDefinitionId)
@@ -115,6 +122,9 @@ public class WorkflowDefinitionAssembler {
                 .authorizationList(authorizations)
                 .tasks(createdTaskDefinitions)
                 .variableDefinitions(createdVariableDefinitions)
+                .failedCondition(failedCondition)
+                .completedCondition(completedCondition)
+                .runningCondition(runningCondition)
                 .build();
 
         workflowDefinition.getTasks().forEach(task -> {task.setWorkflowDefinition(workflowDefinition);});

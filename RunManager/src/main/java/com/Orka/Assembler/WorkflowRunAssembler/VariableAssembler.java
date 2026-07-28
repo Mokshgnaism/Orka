@@ -1,4 +1,4 @@
-package com.Orka.Assembler;
+package com.Orka.Assembler.WorkflowRunAssembler;
 import com.Orka.entities.runtime.WorkflowRun;
 import com.Orka.internal.Variable;
 import com.Orka.internal.VariableDefinition;

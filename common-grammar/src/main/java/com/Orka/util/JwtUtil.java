@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 @Component
 public class JwtUtil {
-    private final static String SECRET = "my-strong-secret-key";
+    private final static String SECRET = "my-super-secret-key-that-is-at-least-32-bytes-long!";
     private final static SecretKey SECRET_KEY = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
 //            will be used from envs donot worry
     public  String getJwt(String email,String username){

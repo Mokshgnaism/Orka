@@ -12,9 +12,13 @@ import java.util.UUID;
 @Repository
 public interface WorkflowRunRepository extends JpaRepository<WorkflowRun, UUID> {
     @Query("""
-    select wr from WorkflowRun wr
-    JOIN wr.authorizations auth
-    where auth.username = :username
+SELECT DISTINCT wr
+FROM WorkflowRun wr
+JOIN wr.workflowDefinition wd
+LEFT JOIN wr.authorizations runAuth
+LEFT JOIN wd.authorizationList defAuth
+WHERE runAuth.username = :username
+   OR defAuth.username = :username
 """)
     List<WorkflowRun>findAuthorizedWorkflowRuns(@Param("username")String username);
 }

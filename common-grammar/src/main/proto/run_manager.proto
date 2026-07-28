@@ -3,6 +3,9 @@ package orka.api;
 
 import "workflow_run.proto";
 import "ProvideInputRequest.proto";
+import "all_workflow_runs.proto";
+import "all_task_runs.proto";
+
 option java_package = "com.Orka.apiContract.generated.services";
 
 service RunManager{
@@ -10,4 +13,12 @@ service RunManager{
       returns (StartWorkflowRunResponse);
   rpc provideInput(ProvideInputRequest)
       returns (ProvideInputResponse);
+  rpc getAllWorkflowRuns(GetAllWorkflowRunsRequest)
+      returns (GetAllWorkflowRunsResponse);
+  rpc getAllTaskRuns(GetAllTaskRunsRequest)
+      returns (GetAllTaskRunsResponse);
+  rpc getTaskRunById(GetSingleTaskRunRequest)
+      returns (GetSingleTaskRunResponse);
+  rpc getWorkflowRunById(GetSingleWorkflowRunRequest)
+      returns (GetSingleWorkflowRunResponse);
 }

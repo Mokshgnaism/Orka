@@ -1,4 +1,4 @@
-package com.Orka.Assembler;
+package com.Orka.Assembler.WorkflowRunAssembler;
 import com.Orka.ENUM.AuthEnums.TASK_RUN_AUTH_ROLE;
 import com.Orka.ENUM.status.WorkflowRunStatus;
 import com.Orka.apiContract.generated.TaskRunAuthRole;
@@ -8,7 +8,6 @@ import com.Orka.entities.authorization.TaskRunAuthorization;
 import com.Orka.entities.definition.WorkflowDefinition;
 import com.Orka.entities.runtime.TaskRun;
 import com.Orka.entities.runtime.WorkflowRun;
-import com.Orka.util.ProtoEnumMapper;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -37,7 +36,7 @@ public class WorkflowRunAssembler {
                 map(taskDefinition -> TaskRunAssembler.assemble(taskDefinition, workflowRun)).
                 toList();
 
-        List<com.Orka.entities.authorization.WorkflowRunAuthorization> authorizations = workflowRunAuthorizationDTOS.stream().map(auth->WorkflowRunAuthorizationAssembler.assemble(auth,workflowRun)).toList();
+        List<com.Orka.entities.authorization.WorkflowRunAuthorization> authorizations = workflowRunAuthorizationDTOS.stream().map(auth-> WorkflowRunAuthorizationAssembler.assemble(auth,workflowRun)).toList();
 
         workflowRun.setAuthorizations(authorizations);
 
@@ -67,7 +66,7 @@ public class WorkflowRunAssembler {
 
         workflowRun.setTaskRuns(taskRuns);
 
-        List<com.Orka.internal.Variable>variables = workflowDefinition.getVariableDefinitions().stream().map(varDef->VariableAssembler.assemble(varDef,workflowRun)).toList();
+        List<com.Orka.internal.Variable>variables = workflowDefinition.getVariableDefinitions().stream().map(varDef-> VariableAssembler.assemble(varDef,workflowRun)).toList();
 
         workflowRun.setVariables(variables);
 

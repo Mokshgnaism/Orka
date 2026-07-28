@@ -1,5 +1,4 @@
 package com.Orka.docker;
-
 import com.Orka.apiContract.generated.ScriptExecutionResult;
 import com.Orka.constants.ExecutionContract;
 import com.Orka.entities.definition.ScriptDefinition;
@@ -12,7 +11,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.file.Files;

@@ -2,6 +2,7 @@ package com.Orka.service;
 
 import com.Orka.apiContract.generated.StateRunStartedEvent;
 import com.Orka.docker.DockerScriptExecutor;
+import com.Orka.entities.definition.StateDefinition;
 import com.Orka.entities.runtime.ScriptExecution;
 import com.Orka.entities.runtime.StateRun;
 import com.Orka.repository.ScriptExecutionRepository;
@@ -41,6 +42,16 @@ public class ScriptRunner {
         if(stateRun.getStateDefinition().getScriptDefinition()==null){
             log.info("script definition not present [human task]");
             return;
+        }
+        StateDefinition def = stateRun.getStateDefinition();
+
+        log.info("StateRun        : {}", stateRun.getId());
+        log.info("StateDefinition : {}", def.getId());
+        log.info("State name      : {}", def.getName());
+
+        if (def.getScriptDefinition() != null) {
+            log.info("Script id       : {}", def.getScriptDefinition().getId());
+            log.info("Script name     : {}", def.getScriptDefinition().getScriptName());
         }
         log.info("script definition present [automated task]");
         Optional<ScriptExecution> presentScriptExecution = scriptExecutionRepository.findByStateRun_Id(stateRun.getId());

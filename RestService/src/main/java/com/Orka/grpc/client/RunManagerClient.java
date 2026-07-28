@@ -1,9 +1,6 @@
 package com.Orka.grpc.client;
 
-import com.Orka.apiContract.generated.ProvideInputRequest;
-import com.Orka.apiContract.generated.ProvideInputResponse;
-import com.Orka.apiContract.generated.StartWorkflowRunRequest;
-import com.Orka.apiContract.generated.StartWorkflowRunResponse;
+import com.Orka.apiContract.generated.*;
 import com.Orka.apiContract.generated.services.RunManagerGrpc;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +17,22 @@ public class RunManagerClient {
     }
     public ProvideInputResponse provideInput(@RequestBody ProvideInputRequest request){
         return stub.provideInput(request);
+    }
+
+    public GetAllTaskRunsResponse getAllTaskRuns(GetAllTaskRunsRequest request){
+        return stub.getAllTaskRuns(request);
+    }
+
+    public GetAllWorkflowRunsResponse getAllWorkflowRuns(GetAllWorkflowRunsRequest request){
+        return stub.getAllWorkflowRuns(request);
+    }
+
+    public GetSingleTaskRunResponse getTaskRunById(GetSingleTaskRunRequest request){
+        return stub.getTaskRunById(request);
+    }
+
+    public GetSingleWorkflowRunResponse getWorkflowRunById(GetSingleWorkflowRunRequest request){
+        return stub.getWorkflowRunById(request);
     }
 
 }

@@ -14,9 +14,18 @@ public interface TaskRunRepository extends JpaRepository<TaskRun, UUID> {
     TaskRun findByWorkflowRunAndTaskDefinition_Id(WorkflowRun workflowRun, UUID taskDefinitionId);
 
     @Query("""
-    select tr from TaskRun tr
-    JOIN tr.authorizations auth
+    select DISTINCT tr from TaskRun tr
+    JOIN tr.taskDefinition td\s
+    JOIN tr.workflowRun wr\s
+    JOIN wr.workflowDefinition wd\s
+    LEFT JOIN tr.authorizations auth
+    LEFT JOIN td.authorizations tdAuth
+    LEFT JOIN wr.authorizations wfAuth
+    LEFT JOIN wd.authorizationList wdAuth
     where auth.username = :username
+    OR tdAuth.username = :username
+    OR wfAuth.username = :username
+    OR wdAuth.username = :username
 """)
     List<TaskRun>findAuthorizedTaskRuns(@Param("username")String username);
 }

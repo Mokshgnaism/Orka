@@ -28,10 +28,10 @@ public class DefinitionMangerController
 
 //    TODO : check why it is wrong .
     public void GetAllWorkflowDefinitions(
-            GetAllWorkflowDefinitionsRequest getAllWorkflowDefinitionsRequest,
+            GetAllWorkflowDefinitionsRequest request,
             StreamObserver<GetAllWorkflowDefinitionsResponse>responseObserver
     ){
-        definitionManagerService.getAllWorkflowDefinitions(responseObserver);
+        definitionManagerService.getAllWorkflowDefinitions(responseObserver,request.getUsername());
     }
 
 

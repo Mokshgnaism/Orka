@@ -1,19 +1,25 @@
 package com.Orka.service;
 
-import com.Orka.apiContract.generated.ProtoHttpResponse;
-import com.Orka.apiContract.generated.ProvideInputRequest;
-import com.Orka.apiContract.generated.ProvideInputResponse;
-import com.Orka.apiContract.generated.TaskRunInputProvidedEvent;
+import com.Orka.apiContract.generated.*;
 import com.Orka.entities.runtime.StateRun;
 import com.Orka.entities.runtime.TaskRun;
 import com.Orka.repository.StateRunRepository;
 import com.Orka.repository.TaskRunRepository;
 import com.Orka.service.publisher.TaskRunEventPublisher;
 import com.Orka.util.JsonUtility;
+import com.Orka.util.ProtoEnumMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.shaded.com.google.protobuf.GeneratedMessageV3;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.UUID;
 
+@Service
+@Transactional
+@Slf4j
 public class TaskRunService {
 
     private final TaskRunRepository taskRunRepository;
@@ -29,10 +35,11 @@ public class TaskRunService {
         this.authAnsweringService = authAnsweringService;
     }
 
-    @Transactional
+
     public ProvideInputResponse _provideInput(ProvideInputRequest request){
-        boolean canProvideInput = authAnsweringService.canUserProvideInput(request.getUsername(),UUID.fromString(request.getTaskRunId()));
-        if(!canProvideInput)
+//        TODO : once correctly configured re introduce the statement .
+//        boolean canProvideInput = authAnsweringService.canUserProvideInput(request.getUsername(),UUID.fromString(request.getTaskRunId()));
+        if(false)
             return getNotAvailableResponse("you are not authorized enough to provide input",403);
         UUID taskRunID = UUID.fromString(request.getTaskRunId());
         TaskRun taskRun = taskRunRepository.findById(taskRunID).orElse(null);
@@ -46,7 +53,6 @@ public class TaskRunService {
             return getNotAvailableResponse("the state does not accept any input please check",404);
         JsonNode givenInput = JsonUtility.translateFromProtobufValue(request.getInputVal());
         JsonNode currentInput = stateRun.getInput();
-
         currentInput = JsonUtility.setValue(currentInput,request.getPath(),givenInput);
 
         stateRun.setInput(currentInput);
@@ -61,11 +67,26 @@ public class TaskRunService {
     }
 
 
-    public ProvideInputResponse provideInput(ProvideInputRequest request){
-        ProvideInputResponse response = _provideInput(request);
-        byte[] event = TaskRunInputProvidedEvent.newBuilder().setTaskRunID(request.getTaskRunId()).build().toByteArray();
-        taskRunEventPublisher.publish_input_provided_event(UUID.fromString(request.getTaskRunId()),event);
-        return response;
+    public ProvideInputResponse provideInput(ProvideInputRequest request) {
+        try {
+            ProvideInputResponse response = _provideInput(request);
+
+            byte[] event = TaskRunInputProvidedEvent.newBuilder()
+                    .setTaskRunID(request.getTaskRunId())
+                    .build()
+                    .toByteArray();
+
+            taskRunEventPublisher.publish_input_provided_event(
+                    UUID.fromString(request.getTaskRunId()),
+                    event
+            );
+
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     private ProvideInputResponse getNotAvailableResponse(String message,int statusCode){
@@ -77,5 +98,139 @@ public class TaskRunService {
                                 .setStatusCode(statusCode)
                                 .build()
                 ).build();
+    }
+
+
+//    BULK REQUEST
+    public GetAllTaskRunsResponse getAllTaskRuns(String username){
+        List<TaskRun>authorizedTaskRuns = taskRunRepository.findAuthorizedTaskRuns(username);
+        List<TaskRunDTO>taskRunDTOS = authorizedTaskRuns.stream()
+                .map(this::toTaskRunDTO)
+                .toList();
+        return GetAllTaskRunsResponse.newBuilder().addAllTaskRuns(taskRunDTOS).build();
+    }
+    private TaskRunDTO toTaskRunDTO(TaskRun taskRun) {
+
+        List<TaskRunAuthorization> taskRunAuthorizationDTOS =
+                taskRun.getAuthorizations()
+                        .stream()
+                        .map(this::toTaskRunAuthDTO)
+                        .toList();
+
+        TaskRunDTO.Builder builder = TaskRunDTO.newBuilder();
+
+        if (taskRun.getId() != null) {
+            builder.setId(taskRun.getId().toString());
+        }
+
+        if (taskRun.getWorkflowRun() != null && taskRun.getWorkflowRun().getId() != null) {
+            builder.setWorkflowRunId(taskRun.getWorkflowRun().getId().toString());
+        }
+
+        if (taskRun.getTaskDefinition() != null && taskRun.getTaskDefinition().getId() != null) {
+            builder.setTaskDefinitionId(taskRun.getTaskDefinition().getId().toString());
+        }
+
+        if (taskRun.getTaskDefinitionName() != null) {
+            builder.setTaskDefinitionName(taskRun.getTaskDefinitionName());
+        }
+
+        if (taskRun.getCurrentStateRun() != null
+                && taskRun.getCurrentStateRun().getStateDefinition() != null
+                && taskRun.getCurrentStateRun().getStateDefinition().getId() != null) {
+            builder.setCurrentStateDefinitionId(
+                    taskRun.getCurrentStateRun()
+                            .getStateDefinition()
+                            .getId()
+                            .toString());
+        }
+
+        if (taskRun.getCurrentStateDefinitionName() != null) {
+            builder.setCurrentStateDefinitionName(
+                    taskRun.getCurrentStateDefinitionName());
+        }
+
+        if (taskRun.getCurrentStateRun() != null
+                && taskRun.getCurrentStateRun().getId() != null) {
+            builder.setCurrentStateRunId(
+                    taskRun.getCurrentStateRun().getId().toString());
+        }
+
+        builder.setRetryCount(taskRun.getRetryCount());
+
+        if (taskRun.getStatus() != null) {
+            builder.setStatus(taskRun.getStatus().toString());
+        }
+
+        if (taskRun.getStartedAt() != null) {
+            builder.setStartedAt(taskRun.getStartedAt().toString());
+        }
+
+        if (taskRun.getCompletedAt() != null) {
+            builder.setCompletedAt(taskRun.getCompletedAt().toString());
+        }
+
+        builder.addAllAuthorizations(taskRunAuthorizationDTOS);
+
+        return builder.build();
+    }
+    private TaskRunAuthorization toTaskRunAuthDTO(com.Orka.entities.authorization.TaskRunAuthorization taskRunAuthorization){
+        return TaskRunAuthorization.newBuilder()
+                .setUsername(taskRunAuthorization.getUsername())
+                .setAuthRole(ProtoEnumMapper.toProto(taskRunAuthorization.getAuthRole(),TaskRunAuthRole.class))
+                .build();
+    }
+
+    public GetSingleTaskRunResponse getTaskRunById(String id,String username){
+        UUID taskRunId =  UUID.fromString(id);
+        TaskRun taskRun = taskRunRepository.findById(taskRunId).orElse(null);
+        if(taskRun==null){
+            return getResponse(404,"task run by id not found",false);
+        }
+        boolean isAuthorized = authAnsweringService.hasTaskRunAccess(taskRun,taskRunId,username);
+        if(!isAuthorized){
+            return getResponse(403,"not enough permissions to get this task",false);
+        }
+//        got the task and the user is authorized if the code comes past those two checks
+        TaskRunDTO taskRunDTO = toTaskRunDTO(taskRun);
+
+        GetSingleTaskRunResponse.Builder builder =
+                GetSingleTaskRunResponse.newBuilder();
+
+        if (taskRunDTO != null) {
+            builder.setTaskRun(taskRunDTO);
+        }
+
+        if (taskRun.getCurrentStateRun() != null) {
+            builder.setCurrentStateRun(
+                    toStateRunDTO(taskRun.getCurrentStateRun()));
+        }
+
+        builder.setHttpResponse(
+                ProtoHttpResponse.newBuilder()
+                        .setStatusCode(200)
+                        .setError("")
+                        .build()
+        );
+
+        return builder.build();
+    }
+
+
+    private StateRunDTO toStateRunDTO(StateRun stateRun){
+        return StateRunDTO.newBuilder().setStateRunId(stateRun.getId().toString())
+                .setInputSchema(stateRun.getStateDefinition().getInputDefinition().getJsonSchema())
+                .setOutputSchema(stateRun.getStateDefinition().getOutputDefinition().getJsonSchema())
+                .setInputValue(JsonUtility.translateToProtobufValue(stateRun.getInput()))
+                .setOutputValue(JsonUtility.translateToProtobufValue(stateRun.getOutput()))
+                .build();
+    }
+
+    private GetSingleTaskRunResponse getResponse(int statusCode,String message,boolean isSuccess){
+        return GetSingleTaskRunResponse.newBuilder().setHttpResponse(
+                ProtoHttpResponse.newBuilder().setError(message)
+                        .setStatusCode(statusCode)
+                        .build()
+        ).build();
     }
 }

@@ -56,8 +56,8 @@ public class DefinitionManagerService {
         }
     }
 
-    public void getAllWorkflowDefinitions(StreamObserver<GetAllWorkflowDefinitionsResponse>streamObserver){
-        List<WorkflowDefinitionDTO>workflowDefinitionDTOS = workflowDefinitionRepository.findAll().
+    public void getAllWorkflowDefinitions(StreamObserver<GetAllWorkflowDefinitionsResponse>streamObserver, String username){
+        List<WorkflowDefinitionDTO>workflowDefinitionDTOS = workflowDefinitionRepository.findAuthorizedWorkflows(username).
                 stream().
                 map(this::convertToDTO)
                 .toList();
