@@ -107,9 +107,18 @@ public class WorkflowDefinitionAssembler {
         Condition failedConditionDTO = request.getFailedCondition();
         Condition completedConditionDTO = request.getCompletedCondition();
         Condition runningConditionDTO = request.getRunningCondition();
-        com.Orka.entities.condition.Condition failedCondition =  ConditionAssembler.assemble(failedConditionDTO,workflowDefinitionId);
-        com.Orka.entities.condition.Condition completedCondition =  ConditionAssembler.assemble(completedConditionDTO,workflowDefinitionId);
-        com.Orka.entities.condition.Condition runningCondition =  ConditionAssembler.assemble(runningConditionDTO,workflowDefinitionId);
+        com.Orka.entities.condition.Condition failedCondition = null;
+        if (failedConditionDTO != null) {
+            failedCondition = ConditionAssembler.assemble(failedConditionDTO, workflowDefinitionId);
+        }
+        com.Orka.entities.condition.Condition completedCondition = null;
+        if (completedConditionDTO != null) {
+            completedCondition = ConditionAssembler.assemble(completedConditionDTO, workflowDefinitionId);
+        }
+        com.Orka.entities.condition.Condition runningCondition = null;
+        if (runningConditionDTO != null) {
+            runningCondition = ConditionAssembler.assemble(runningConditionDTO, workflowDefinitionId);
+        }
 
         WorkflowDefinition workflowDefinition =  WorkflowDefinition.builder()
                 .id(workflowDefinitionId)
@@ -122,10 +131,13 @@ public class WorkflowDefinitionAssembler {
                 .authorizationList(authorizations)
                 .tasks(createdTaskDefinitions)
                 .variableDefinitions(createdVariableDefinitions)
-                .failedCondition(failedCondition)
-                .completedCondition(completedCondition)
-                .runningCondition(runningCondition)
+//                .failedCondition(failedCondition)
+//                .completedCondition(completedCondition)
+//                .runningCondition(runningCondition)
                 .build();
+        workflowDefinition.setFailedCondition(failedCondition);
+        workflowDefinition.setCompletedCondition(completedCondition);
+        workflowDefinition.setRunningCondition(runningCondition);
 
         workflowDefinition.getTasks().forEach(task -> {task.setWorkflowDefinition(workflowDefinition);});
 

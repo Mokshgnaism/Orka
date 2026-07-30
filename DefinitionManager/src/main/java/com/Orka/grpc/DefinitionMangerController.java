@@ -27,7 +27,8 @@ public class DefinitionMangerController
     }
 
 //    TODO : check why it is wrong .
-    public void GetAllWorkflowDefinitions(
+    @Override
+    public void getAllWorkflowDefinitions(
             GetAllWorkflowDefinitionsRequest request,
             StreamObserver<GetAllWorkflowDefinitionsResponse>responseObserver
     ){

@@ -2,6 +2,7 @@ package com.Orka.controller.RestBlueprintController;
 
 import com.Orka.grpc.client.DefinitionManagerClient;
 import com.Orka.user.User;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,19 +28,26 @@ public class RestDefinitionController {
         // check the username to be correct from frontend if trying to impersonate reject
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        System.out.println(auth);
-        System.out.println(auth.getPrincipal());
-
         User user = (User) auth.getPrincipal();
-
-        System.out.println(user);
-        System.out.println(user.getUsername());
-
         if(!user.getUsername().equals(createWorkflowDefinitionRequest.getUsername())){
             return ResponseEntity.badRequest().body(CreateWorkflowDefinitionResponse.newBuilder().setJson("{error:wrong username sent by frontend}").build());
         }
         CreateWorkflowDefinitionResponse response = definitionManagerClient.createWorkflowDefinition(createWorkflowDefinitionRequest);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/api/definition/workflow")
+    public ResponseEntity<GetAllWorkflowDefinitionsResponse> getAllWorkflowDefintions(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) auth.getPrincipal();
+        if(user!=null){
+//            WILL NOT REACH HERE
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        var req = GetAllWorkflowDefinitionsRequest.newBuilder().setUsername(user.getUsername()).build();
+        GetAllWorkflowDefinitionsResponse response = definitionManagerClient.getAllWorkflowDefinitions(req);
+
+        return ResponseEntity.status(200).body(response);
+    }
+
 }

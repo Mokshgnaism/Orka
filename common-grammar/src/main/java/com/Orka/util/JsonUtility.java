@@ -7,11 +7,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.Value;
 import com.google.protobuf.util.JsonFormat;
+import lombok.extern.slf4j.Slf4j;
 import org.postgresql.util.PGobject;
 
 import java.sql.SQLException;
 
 //import logging
+@Slf4j
 public class JsonUtility {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     public static JsonNode getValue(JsonNode root, String jsonPath){
@@ -53,6 +55,7 @@ public class JsonUtility {
             throw new IllegalArgumentException(
                     "Root must be an ObjectNode");
         }
+        log.info("json Path being sent by frontend {}",jsonPath);
 
         if (!jsonPath.startsWith("$."))
             throw new IllegalArgumentException(

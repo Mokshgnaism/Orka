@@ -142,6 +142,8 @@ public class WorkflowRunGraphAssembler {
                 .setStateName(stateRun.getStateDefinition().getName())
                 .setTaskName(stateRun.getTaskRun().getTaskDefinitionName())
                 .setId(stateRun.getId().toString())
+                .setInternalState(ProtoEnumMapper.toProto(stateRun.getStateDefinition().getInternalState(),OrkaInternalState.class))
+                .setIsActive(stateRun.getTaskRun().getCurrentStateRun()==stateRun)
                 .build();
     }
 }

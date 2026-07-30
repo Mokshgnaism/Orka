@@ -2,6 +2,8 @@ package com.Orka.grpc.client;
 
 import com.Orka.apiContract.generated.CreateWorkflowDefinitionRequest;
 import com.Orka.apiContract.generated.CreateWorkflowDefinitionResponse;
+import com.Orka.apiContract.generated.GetAllWorkflowDefinitionsRequest;
+import com.Orka.apiContract.generated.GetAllWorkflowDefinitionsResponse;
 import com.Orka.apiContract.generated.services.DefinitionManagerGrpc;
 import org.springframework.stereotype.Service;
 
@@ -14,5 +16,9 @@ public class DefinitionManagerClient {
     }
     public CreateWorkflowDefinitionResponse createWorkflowDefinition(CreateWorkflowDefinitionRequest request){
         return stub.createWorkflowDefinition(request);
+    }
+
+    public GetAllWorkflowDefinitionsResponse getAllWorkflowDefinitions(GetAllWorkflowDefinitionsRequest request){
+        return stub.getAllWorkflowDefinitions(request);
     }
 }

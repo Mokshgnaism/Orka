@@ -7,6 +7,7 @@ option java_package = "com.Orka.apiContract.generated";
 import "workflow_run.proto";
 import "StateRunStarted.proto";
 import "httpResponse.proto";
+import "common.proto";
 message TaskRunDTO {
   string id = 1;
   string workflow_run_id = 2;
@@ -20,6 +21,9 @@ message TaskRunDTO {
   string started_at = 9;
   string completed_at = 10;
   repeated TaskRunAuthorization authorizations = 11;
+  string workflow_definition_name=13;
+  string owner=14;
+  OrkaInternalState current_internal_state=15;
 }
 
 message GetAllTaskRunsResponse {
