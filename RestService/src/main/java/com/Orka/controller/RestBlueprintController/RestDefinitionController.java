@@ -36,11 +36,11 @@ public class RestDefinitionController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/api/definition/workflow")
+    @PostMapping("/api/definition/workflowdefinitions")
     public ResponseEntity<GetAllWorkflowDefinitionsResponse> getAllWorkflowDefintions(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) auth.getPrincipal();
-        if(user!=null){
+        if(user==null){
 //            WILL NOT REACH HERE
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
