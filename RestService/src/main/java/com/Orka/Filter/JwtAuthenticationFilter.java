@@ -37,6 +37,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.info("Cookies not found");
             return;
         }
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         String jwt = "";
         for (Cookie cookie : cookies){
             if(cookie.getName().equals(Constant.JWT_COOKIE)){

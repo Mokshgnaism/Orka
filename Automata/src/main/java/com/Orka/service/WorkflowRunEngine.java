@@ -53,9 +53,18 @@ public class WorkflowRunEngine {
 
         workflowRun.getTaskRuns().forEach(taskRunEngine::update);
 
-        boolean isRunning = workflowRun.getWorkflowDefinition().getRunningCondition().isSatisified(evaluationContext);
-        boolean isCompleted = workflowRun.getWorkflowDefinition().getCompletedCondition().isSatisified(evaluationContext);
-        boolean isFailed = workflowRun.getWorkflowDefinition().getFailedCondition().isSatisified(evaluationContext);
+//        there is an issue with these things . right now the current workflows will not be able to update for now (since these are not available ...) for back compatibility we will set these .. to support null vals .
+        boolean isRunning =
+                workflowRun.getWorkflowDefinition().getRunningCondition() != null
+                        && workflowRun.getWorkflowDefinition().getRunningCondition().isSatisified(evaluationContext);
+
+        boolean isCompleted =
+                workflowRun.getWorkflowDefinition().getCompletedCondition() != null
+                        && workflowRun.getWorkflowDefinition().getCompletedCondition().isSatisified(evaluationContext);
+
+        boolean isFailed =
+                workflowRun.getWorkflowDefinition().getFailedCondition() != null
+                        && workflowRun.getWorkflowDefinition().getFailedCondition().isSatisified(evaluationContext);
 
         if(isCompleted){
             workflowRun.setStatus(WorkflowRunStatus.COMPLETED);

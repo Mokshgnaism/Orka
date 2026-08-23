@@ -4,14 +4,18 @@ package orka.api;
 option java_package = "com.Orka.apiContract.generated";
 
 import "google/protobuf/struct.proto";
+import "script_definition.proto";
 option java_multiple_files = true;
 message StateRunStartedEvent{
   string id=1;
 }
+import "common.proto";
 message StateRunDTO{
   string inputSchema=1;
   string outputSchema=2;
   google.protobuf.Value inputValue = 3;
   google.protobuf.Value outputValue =4;
   string state_run_id=5;
+  ScriptDefinition scriptDefinition=6;
+  OrkaInternalState internal_state=7;
 }

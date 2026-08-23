@@ -1,5 +1,6 @@
 package com.Orka.apiTests;
 
+import com.Orka.apiContract.generated.GetAllTaskRunsResponse;
 import com.Orka.apiContract.generated.GetAllWorkflowRunsResponse;
 import com.google.protobuf.util.JsonFormat;
 
@@ -18,7 +19,7 @@ public class GetAllWorkflows {
         HttpClient client = login.getLoggedInClient();
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/api/run/workflows"))
+                .uri(URI.create(BASE_URL + "/api/run/tasks"))
                 .header("Accept", "application/x-protobuf")
                 .GET()
                 .build();
@@ -28,8 +29,8 @@ public class GetAllWorkflows {
                 HttpResponse.BodyHandlers.ofByteArray()
         );
 
-        GetAllWorkflowRunsResponse workflows =
-                GetAllWorkflowRunsResponse.parseFrom(response.body());
+        GetAllTaskRunsResponse workflows =
+                GetAllTaskRunsResponse.parseFrom(response.body());
 
         System.out.println(
                 JsonFormat.printer()

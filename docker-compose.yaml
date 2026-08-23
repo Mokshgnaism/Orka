@@ -17,7 +17,7 @@ services:
       timeout: 5s
       retries: 5
   kafka:
-    image: apache/kafka:4.1.0
+    image: apache/kafka:latest
     hostname: kafka
     ports:
       - "9092:9092"
