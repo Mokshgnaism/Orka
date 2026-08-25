@@ -32,7 +32,13 @@ public class DefinitionMangerController
             GetAllWorkflowDefinitionsRequest request,
             StreamObserver<GetAllWorkflowDefinitionsResponse>responseObserver
     ){
-        definitionManagerService.getAllWorkflowDefinitions(responseObserver,request.getUsername());
+        try{
+            definitionManagerService.getAllWorkflowDefinitions(responseObserver,request.getUsername());
+        }
+        catch(Exception e){
+            responseObserver.onError(e);
+            e.printStackTrace();
+        }
     }
 
 

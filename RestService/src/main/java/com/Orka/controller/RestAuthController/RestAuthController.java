@@ -41,6 +41,7 @@ public class RestAuthController {
     public ResponseEntity<ProtoHttpResponse> login(HttpServletRequest request, @RequestBody LoginRequestDTO loginRequestDTO, ServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user  = null;
+        log.info("[recieved login request]");
         if(auth.getPrincipal() instanceof User){
             user = (User) auth.getPrincipal();
         }
@@ -115,6 +116,7 @@ public class RestAuthController {
 //       NOTE: the non-null check is not required since the proto serializer already checks for non-null.
         String username = request.getUsername();
         String email = request.getEmail();
+        log.info("[recieved Signup request]");
         String password = request.getPassword();
 //        TODO : write a database query which performs both of these operations once and for all
         User ExistingUser1 = userRepository.findByUsername(username).orElse(null);

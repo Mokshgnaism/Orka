@@ -79,12 +79,13 @@ public class DefinitionManagerService {
                 .setStartTaskId(workflowDefinition.getStartTaskDefinitionId().toString())
                 .setStartTaskName(workflowDefinition.getStartState().getTaskDefinition().getName())
                 .addAllAuthorizations(workflowDefinitionAuthorizationDTOS)
+                .setNumberOfTasks(workflowDefinition.getTasks().toArray().length)
                 .build();
     }
     private WorkflowDefinitionAuthorization mapToAuthDTO(com.Orka.entities.authorization.WorkflowDefinitionAuthorization workflowDefinitionAuthorization ){
         return  WorkflowDefinitionAuthorization.newBuilder().
-                setAuthorization(ProtoEnumMapper.toProto(workflowDefinitionAuthorization.getAuthRole(),WorkflowDefinitionAuthRole.class))
-                .setUsername(workflowDefinitionAuthorization.getUsername())
+//                setAuthorization(ProtoEnumMapper.toProto(workflowDefinitionAuthorization.getAuthRole(),WorkflowDefinitionAuthRole.class))
+                setUsername(workflowDefinitionAuthorization.getUsername())
                 .build();
     }
 
