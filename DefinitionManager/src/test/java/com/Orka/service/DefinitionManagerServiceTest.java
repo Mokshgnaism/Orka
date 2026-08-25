@@ -70,7 +70,7 @@ class DefinitionManagerServiceTest {
         assertTrue(observer.completedWithError);
         assertInstanceOf(StatusRuntimeException.class, observer.error);
         assertEquals(Status.Code.INTERNAL, ((StatusRuntimeException) observer.error).getStatus().getCode());
-        assertEquals("db down", observer.error.getMessage());
+        assertEquals("db down", ((StatusRuntimeException) observer.error).getStatus().getDescription());
         verify(kafkaPublisher, never()).publish_workflowDefinitionStarted(any());
     }
 

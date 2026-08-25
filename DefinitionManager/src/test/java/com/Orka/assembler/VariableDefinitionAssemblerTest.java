@@ -66,7 +66,10 @@ class VariableDefinitionAssemblerTest {
         com.Orka.apiContract.generated.VariableDefinition dto = com.Orka.apiContract.generated.VariableDefinition.newBuilder()
                 .setName("jsonVar")
                 .setVariableType(com.Orka.apiContract.generated.VariableType.JSON)
-                .setDefaultValue(Value.newBuilder().setStringValue("{\"key\":\"value\"}").build())
+                .setDefaultValue(Value.newBuilder().setStructValue(
+                        com.google.protobuf.Struct.newBuilder()
+                                .putFields("key", Value.newBuilder().setStringValue("value").build())
+                                .build()).build())
                 .build();
 
         com.Orka.internal.VariableDefinition result = VariableDefinitionAssembler.assemble(dto, workflowId);
