@@ -27,6 +27,7 @@
 		<module>Automata</module>
         <module>ScriptExecutor</module>
         <module>AuthorizationManager</module>
+        <module>NotificationManager</module>
     </modules>
 
 	<properties>
