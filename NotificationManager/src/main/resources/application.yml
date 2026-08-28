@@ -1,0 +1,51 @@
+server:
+  port: 4646
+
+spring:
+  datasource:
+    url: ${PG_ADDRESS:jdbc:postgresql://localhost:5432/orka}
+    username: postgres
+    password: Mokshgna@123
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      auto-commit: false
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  kafka:
+    bootstrap-servers: ${KAFKA_ADDRESS:localhost:9092}
+    consumer:
+      group-id: notification-manager
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:false}
+          starttls:
+            enable: ${MAIL_SMTP_STARTTLS:false}
+
+notification:
+  websocket:
+    allowed-origin-patterns: ${NOTIFICATION_ALLOWED_ORIGINS:http://localhost:8080,http://localhost:4536,http://localhost:4646}
+  mail:
+    enabled: ${MAIL_ENABLED:false}
+    from: ${MAIL_FROM:no-reply@orka.local}
+  forgot-password:
+    subject: ${FORGOT_PASSWORD_SUBJECT:Reset your Orka password}
+    reset-url-template: ${FORGOT_PASSWORD_RESET_URL:http://localhost:8080/reset-password?email={email}}
+
+logging:
+  level:
+    com.Orka: DEBUG
