@@ -6,7 +6,7 @@ The repository is a Maven multi-module project built with Java 24, Spring Boot 4
 
 ## Current status
 
-This repository contains a working development-oriented service layout, but it is not yet production-ready. The REST facade, DefinitionManager, RunManager, Automata, and ScriptExecutor are present. AuthorizationManager is incomplete and is not currently a runnable Spring Boot service. See [Known limitations](#known-limitations) before deploying or relying on authorization and script execution behavior.
+This repository contains a working development-oriented service layout, but it is not yet production-ready. The REST facade, DefinitionManager, RunManager, Automata, ScriptExecutor, and NotificationManager are present. AuthorizationManager is incomplete and is not currently a runnable Spring Boot service. See [Known limitations](#known-limitations) before deploying or relying on authorization and script execution behavior.
 
 ## Contents
 
@@ -41,8 +41,12 @@ flowchart LR
     AUTO --> Kafka
     EXEC[ScriptExecutor] --> DB
     EXEC --> Kafka
+    NOTIFY[NotificationManager :4646] --> DB
+    NOTIFY --> Kafka
     Kafka --> AUTO
     Kafka --> EXEC
+    Kafka --> NOTIFY
+    Client --> NOTIFY
 ```
 
 ### Service responsibilities
@@ -55,6 +59,7 @@ flowchart LR
 | `RestService` | Authenticated HTTP facade; calls DefinitionManager and RunManager | Spring Boot HTTP | `http://localhost:4536` |
 | `Automata` | Consumes workflow events and advances the workflow state machine | Kafka consumer/producer | No HTTP port configured |
 | `ScriptExecutor` | Consumes activated-state events and runs configured scripts in Docker containers | Kafka consumer/producer | No HTTP port is intended |
+| `NotificationManager` | Consumes workflow events, resolves authorized recipients, broadcasts websocket notifications, and handles forgot-password email requests | Spring Boot HTTP/WebSocket and Kafka consumer | `http://localhost:4646` |
 | `AuthorizationManager` | Intended authorization event consumer and authorization service | Incomplete; not currently runnable | None |
 
 The root project is an aggregator with `pom` packaging. The root `src` directory is not a service module and should not be used as the application entry point.
@@ -71,6 +76,7 @@ The root project is an aggregator with `pom` packaging. The root `src` directory
 ├── RestService/               HTTP API and JWT security
 ├── Automata/                  Workflow state-machine worker
 ├── ScriptExecutor/            Docker script-execution worker
+├── NotificationManager/       WebSocket notifications and forgot-password email
 ├── AuthorizationManager/      Incomplete authorization worker
 └── src/                       Root Spring starter skeleton, not a reactor module
 ```
@@ -96,7 +102,7 @@ docker compose version
 
 ## Run with Docker Compose
 
-Docker Compose starts PostgreSQL, Kafka, DefinitionManager, RunManager, RestService, Automata, and ScriptExecutor. Compose injects container-network addresses such as `postgres:5432`, `kafka:9092`, `dm:9090`, and `rm:7070`.
+Docker Compose starts PostgreSQL, Kafka, DefinitionManager, RunManager, RestService, Automata, ScriptExecutor, and NotificationManager. Compose injects container-network addresses such as `postgres:5432`, `kafka:9092`, `dm:9090`, and `rm:7070`.
 
 ### 1. Build the JARs first
 
@@ -115,6 +121,7 @@ docker compose up --build
 The public development endpoints are:
 
 - REST API: `http://localhost:4536`
+- NotificationManager HTTP/WebSocket: `http://localhost:4646`
 - DefinitionManager gRPC: `localhost:9090`
 - RunManager gRPC: `localhost:7070`
 - PostgreSQL: `localhost:5432`
@@ -131,6 +138,7 @@ View service logs:
 ```powershell
 docker compose logs -f rest-service
 docker compose logs -f automata script-executor
+docker compose logs -f notification-manager
 ```
 
 Stop the stack without deleting the database volume:
@@ -169,9 +177,10 @@ Start each Spring Boot application from the repository root in separate terminal
 .\mvnw.cmd -pl RestService spring-boot:run
 .\mvnw.cmd -pl Automata spring-boot:run
 .\mvnw.cmd -pl ScriptExecutor spring-boot:run
+.\mvnw.cmd -pl NotificationManager spring-boot:run
 ```
 
-Start DefinitionManager and RunManager before RestService. Automata and ScriptExecutor require Kafka and PostgreSQL and should be started after the managers are available.
+Start DefinitionManager and RunManager before RestService. Automata, ScriptExecutor, and NotificationManager require Kafka and PostgreSQL and should be started after the managers are available.
 
 For local execution, the default addresses in the service YAML files are:
 
@@ -180,6 +189,7 @@ PostgreSQL: jdbc:postgresql://localhost:5432/orka
 Kafka:      localhost:9092
 DefinitionManager gRPC: static://localhost:9090
 RunManager gRPC:        static://localhost:7070
+NotificationManager HTTP/WebSocket: http://localhost:4646
 ```
 
 ## REST API
@@ -232,6 +242,65 @@ curl.exe -i -c cookies.txt -b cookies.txt -X POST http://localhost:4536/api/auth
   -H "Content-Type: application/json" `
   -d '{"username":"alice","password":"change-this-password"}'
 ```
+
+### Notifications and password reset
+
+NotificationManager is available at `http://localhost:4646`.
+
+Authenticated websocket clients connect to:
+
+```text
+ws://localhost:4646/ws/notifications
+```
+
+The websocket handshake accepts any of the following JWT sources:
+
+- `Authorization: Bearer <jwt>`
+- `JWT_COOKIE` cookie
+- `JWT` cookie
+- `?token=<jwt>` query parameter
+
+NotificationManager consumes the existing Kafka workflow topics and sends JSON notification envelopes to every connected user with authorization on the affected workflow run, task run, state run, workflow definition, or task definition. It derives recipients from the shared authorization relationships in PostgreSQL; it does not require changes to the existing producers.
+
+Clients may also publish a notification over the websocket when the authenticated user is already authorized on the target resource:
+
+```json
+{
+  "type": "client.notification",
+  "scope": "TASK_RUN",
+  "resourceId": "task-run-id",
+  "title": "Input needed",
+  "message": "Please provide task input",
+  "severity": "INFO",
+  "payload": {}
+}
+```
+
+Supported scopes are `WORKFLOW_RUN`, `TASK_RUN`, `STATE_RUN`, `WORKFLOW_DEFINITION`, `TASK_DEFINITION`, and `USER`.
+
+Forgot-password email requests are accepted at:
+
+```text
+POST /api/notifications/forgot-password
+```
+
+Request body:
+
+```json
+{
+  "email": "alice@example.com"
+}
+```
+
+or:
+
+```json
+{
+  "username": "alice"
+}
+```
+
+Mail delivery is disabled by default with `MAIL_ENABLED=false`. Configure SMTP through `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM`, `MAIL_SMTP_AUTH`, and `MAIL_SMTP_STARTTLS`, then set `MAIL_ENABLED=true` to send email.
 
 ### Workflow definitions
 
@@ -386,11 +455,11 @@ Kafka topics are declared in `common-grammar/src/main/java/com/Orka/events/Kafka
 | Topic | Producer | Consumer or purpose |
 | --- | --- | --- |
 | `workflow-definition-created` | DefinitionManager | AuthorizationManager consumer |
-| `workflow-created` | RunManager | Automata starts workflow advancement |
-| `state-activated` | Automata | ScriptExecutor starts script execution |
-| `script-completed` | ScriptExecutor | Automata advances after script completion |
-| `task-input-provided` | RunManager | Automata advances after external input |
-| `workflow-definition-created` | DefinitionManager | Definition-created notification |
+| `workflow-created` | RunManager | Automata starts workflow advancement; NotificationManager broadcasts run notifications |
+| `state-activated` | Automata | ScriptExecutor starts script execution; NotificationManager broadcasts state notifications |
+| `script-completed` | ScriptExecutor | Automata advances after script completion; NotificationManager broadcasts script result notifications |
+| `task-input-provided` | RunManager | Automata advances after external input; NotificationManager broadcasts task-input notifications |
+| `workflow-definition-created` | DefinitionManager | NotificationManager broadcasts definition-created notifications |
 
 The normal intended flow is:
 
@@ -401,6 +470,7 @@ The normal intended flow is:
 5. Automata consumes the workflow event, advances the state machine, and publishes `state-activated`.
 6. ScriptExecutor consumes the activated state, runs the configured script, and publishes `script-completed`.
 7. Automata consumes completion or input events and continues the run.
+8. NotificationManager consumes the same workflow events, resolves authorized recipients from PostgreSQL, and sends websocket notifications to connected clients.
 
 Kafka is configured as a single plaintext broker with replication factor `1` in Compose. This is appropriate for local development only.
 
@@ -414,6 +484,15 @@ Service configuration is stored in each module's `src/main/resources/application
 | `KAFKA_ADDRESS` | `localhost:9092` | Kafka services | Kafka bootstrap server |
 | `DM_ADDRESS` | `static://localhost:9090` | RestService and workers where configured | DefinitionManager gRPC channel |
 | `RM_ADDRESS` | `static://localhost:7070` | RestService and workers where configured | RunManager gRPC channel |
+| `MAIL_ENABLED` | `false` | NotificationManager | Enables actual forgot-password email delivery |
+| `MAIL_HOST` | `localhost` | NotificationManager | SMTP host |
+| `MAIL_PORT` | `1025` | NotificationManager | SMTP port |
+| `MAIL_USERNAME` | empty | NotificationManager | SMTP username |
+| `MAIL_PASSWORD` | empty | NotificationManager | SMTP password |
+| `MAIL_FROM` | `no-reply@orka.local` | NotificationManager | Sender address for forgot-password email |
+| `MAIL_SMTP_AUTH` | `false` | NotificationManager | Enables SMTP authentication |
+| `MAIL_SMTP_STARTTLS` | `false` | NotificationManager | Enables SMTP STARTTLS |
+| `NOTIFICATION_ALLOWED_ORIGINS` | `http://localhost:8080,http://localhost:4536,http://localhost:4646` | NotificationManager | Comma-separated websocket origin patterns |
 
 Configured service ports:
 
@@ -424,6 +503,7 @@ Configured service ports:
 | RunManager | `spring.grpc.server.port: 7070` |
 | Automata | No HTTP or gRPC server port configured |
 | ScriptExecutor | No HTTP port is intended; its current YAML contains a gRPC port setting that is not part of its worker role |
+| NotificationManager | `server.port: 4646` |
 
 ### Database settings
 
@@ -434,6 +514,8 @@ The current repository contains development credentials directly in YAML and Com
 ### CORS and cookies
 
 RestService currently allows the origin `http://localhost:8080`, all methods and headers, and credentials. The JWT cookie is named `JWT`, is HTTP-only, uses `SameSite=Lax`, applies to `/`, and has a one-hour cookie lifetime. The JWT utility currently has a different token expiration configuration; align these values before production use.
+
+NotificationManager allows websocket origins configured by `NOTIFICATION_ALLOWED_ORIGINS`. Its websocket handshake accepts the existing JWT from a bearer header, `JWT_COOKIE`, `JWT`, or a `token` query parameter.
 
 ## Persistence
 
@@ -534,6 +616,9 @@ The following behavior is visible in the current source and should be treated as
 - ScriptExecutor depends on Docker access and expects the executed container to write `/orka/output.json` (it is the contract).
 - Script execution uses a hard-coded 500-second timeout rather than consistently honoring the Protobuf timeout field.
 - Failed or timed-out script execution does not consistently persist a completed failure record with a state-run ID.
+- NotificationManager broadcasts to currently connected websocket sessions only; it does not persist notification history.
+- NotificationManager's forgot-password endpoint sends an email link only. It does not create reset tokens or update passwords because no reset-token workflow or schema exists yet.
+- Forgot-password email delivery is disabled unless `MAIL_ENABLED=true` and SMTP settings are provided.
 - PostgreSQL credentials and the JWT signing secret are hard-coded in the current implementation.
 - The JWT token lifetime and JWT cookie lifetime are inconsistent.
 - All JPA services update the same schema concurrently.
@@ -576,7 +661,7 @@ docker compose build --no-cache
 
 ### A workflow does not progress
 
-Inspect the logs for RunManager, Automata, and ScriptExecutor together. Confirm that Kafka topics exist, that producer and consumer payload types match, that the worker can access PostgreSQL, and that a script writes `/orka/output.json` when output is required.
+Inspect the logs for RunManager, Automata, ScriptExecutor, and NotificationManager together. Confirm that Kafka topics exist, that producer and consumer payload types match, that the workers can access PostgreSQL, and that a script writes `/orka/output.json` when output is required.
 
 ## License and contribution information
 

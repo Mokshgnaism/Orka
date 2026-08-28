@@ -134,5 +134,26 @@ services:
       DM_ADDRESS: static://dm:9090
       RM_ADDRESS: static://rm:7070
 
+  notification-manager:
+    build:
+      context: ./NotificationManager
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    ports:
+      - "4646:4646"
+    environment:
+      PG_ADDRESS: jdbc:postgresql://postgres:5432/orka
+      KAFKA_ADDRESS: kafka:9092
+      MAIL_ENABLED: ${MAIL_ENABLED:-false}
+      MAIL_HOST: ${MAIL_HOST:-localhost}
+      MAIL_PORT: ${MAIL_PORT:-1025}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      MAIL_FROM: ${MAIL_FROM:-no-reply@orka.local}
+
 volumes:
   postgres_data:
